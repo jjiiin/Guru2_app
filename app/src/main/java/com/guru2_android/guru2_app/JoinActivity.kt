@@ -8,15 +8,20 @@ import androidx.databinding.DataBindingUtil
 import com.capstone_design.a1209_app.utils.FBRef
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.guru2_android.guru2_app.databinding.ActivityJoinBinding
 
 class JoinActivity : AppCompatActivity() {
     private lateinit var binding : ActivityJoinBinding
     private lateinit var auth: FirebaseAuth
+    private var store: FirebaseFirestore? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth= Firebase.auth
+        store=Firebase.firestore
         binding= DataBindingUtil.setContentView(this, R.layout.activity_join)
         binding.joinBtn.setOnClickListener {
 
@@ -53,10 +58,12 @@ class JoinActivity : AppCompatActivity() {
                         //회원 데이터베이스에 이메일, 닉네임 정보 저장
                         val userData = UserData(id,name)
                         if(group == "group1"){
-                            FBRef.users1Ref.child(auth.currentUser!!.uid).setValue(userData)
+                            FBRef.users1Ref.child(auth.currentUser!!.uid).setValue(userData)//RDB
+                            FBRef.group1Coll.document(id).set(userData)//FDB
                         }
                         if(group == "group2"){
-                            FBRef.users2Ref.child(auth.currentUser!!.uid).setValue(userData)
+                            FBRef.users2Ref.child(auth.currentUser!!.uid).setValue(userData)//RDB
+                            FBRef.group2Coll.document(id).set(userData)//FDB
                         }
                         //병아리 회원(group1)or 닭회원(group2)별로 보이는 액티비티 나누기(추후)
                         val intent= Intent(this, MainActivity::class.java)
