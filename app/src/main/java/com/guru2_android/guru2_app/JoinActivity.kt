@@ -44,7 +44,7 @@ class JoinActivity : AppCompatActivity() {
                 Toast.makeText(this,"닉네임을 입력해주세요", Toast.LENGTH_LONG).show()
                 isGotoJoin=false
             }
-            if(!pwd.equals(pwdCheck)){
+            if(pwd != pwdCheck){
                 Toast.makeText(this,"비밀번호를 확인해주세요", Toast.LENGTH_LONG).show()
                 isGotoJoin=false
             }
@@ -55,16 +55,10 @@ class JoinActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         Toast.makeText(this,"성공",Toast.LENGTH_LONG).show()
 
-                        //회원 데이터베이스에 이메일, 닉네임 정보 저장
-                        val userData = UserData(id,name)
-                        if(group == "group1"){
-                            FBRef.users1Ref.child(auth.currentUser!!.uid).setValue(userData)//RDB
-                            FBRef.group1Coll.document(id).set(userData)//FDB
-                        }
-                        if(group == "group2"){
-                            FBRef.users2Ref.child(auth.currentUser!!.uid).setValue(userData)//RDB
-                            FBRef.group2Coll.document(id).set(userData)//FDB
-                        }
+                        //회원 데이터베이스에 이메일, 닉네임, 그룹 정보 저장
+                        val userData = UserData(id,name,group)
+                            FBRef.usersRef.child(auth.currentUser!!.uid).setValue(userData)//RDB
+
                         //병아리 회원(group1)or 닭회원(group2)별로 보이는 액티비티 나누기(추후)
                         val intent= Intent(this, MainActivity::class.java)
                         intent.flags= Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

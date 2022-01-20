@@ -11,11 +11,11 @@ class FBRef {
         private val database = Firebase.database
         private val store=Firebase.firestore
         //group별 user-database
-        val users1Ref = database.getReference("users_group1")
-        val users2Ref = database.getReference("users_group2")
-        val group1Coll= store.collection("group1")
-        val group2Coll= store.collection("group2")
-
+        val usersRef = database.getReference("users")
+        //할 일 전달하는 데베(RDB)
+        val jobRef=database.getReference("job")
+        //하루 총평(3단계, 칭찬멘트) 전달하는 데베(FDB)
+        //val firm=store.collection(//"유저id").document(//"날짜").set("Datamodel(//3단계,칭찬멘트))
     }
 
 

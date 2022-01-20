@@ -14,12 +14,12 @@ class JoingroupActivity : AppCompatActivity() {
         binding= DataBindingUtil.setContentView(this,R.layout.activity_joingroup)
         binding.group1.setOnClickListener {
             val intent= Intent(this,JoinActivity::class.java)
-            intent.putExtra("group","group1")
+            intent.putExtra("group","1")
             startActivity(intent)
         }
         binding.group2.setOnClickListener {
             val intent= Intent(this,JoinActivity::class.java)
-            intent.putExtra("group","group2")
+            intent.putExtra("group","2")
             startActivity(intent)
         }
 
