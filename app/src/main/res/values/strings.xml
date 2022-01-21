@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">guru2_app</string>
+    <string name="mypage_toolbar">마이페이지</string>
 </resources>
