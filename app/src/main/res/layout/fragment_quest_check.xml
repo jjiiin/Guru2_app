@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    >
+
+
+    <TextView
+        android:id="@+id/subject_get_text"
+        android:padding="30dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="--퀘스트 제목 받아옴--"
+
+
+        />
+
+    <TextView
+        android:layout_marginLeft="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="메세지"/>
+
+    <EditText
+        android:id="@+id/message_edit"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+
+        android:height="100dp"
+        android:background="@drawable/edit_round"
+        android:enabled="false"
+        android:layout_gravity="center"
+        android:gravity="top"
+        android:padding="13dp"
+
+
+        />
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="인증 사진"/>
+
+    <EditText
+        android:id="@+id/identification_edit"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:padding="13dp"
+
+        android:height="200dp"
+        android:background="@drawable/edit_round"
+        android:enabled="false"
+        android:layout_gravity="center"
+        android:hint="병아리가 첨부한 사진 뜨게 하기"
+
+
+        />
+
+    <Button
+        android:id="@+id/check_quest_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:text="확인"
+        android:textColor="@color/black"
+        android:layout_gravity="end"
+        android:background=""
+
+        />
+
+
+
+
+
+
+</LinearLayout>
