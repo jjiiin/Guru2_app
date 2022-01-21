@@ -8,7 +8,7 @@ import android.widget.*
 import org.w3c.dom.Text
 
 
-class quest_create : AppCompatActivity() {
+class Quest_create : AppCompatActivity() {
 
     lateinit var subject_edit : EditText
 
