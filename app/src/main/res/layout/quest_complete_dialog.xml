@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/quest_complete_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/chicken_profile" />
+
+            <TextView
+                android:id="@+id/quest_complete_quest"
+                android:layout_width="270dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="자기 전에 폰 밖에 두기"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/quest_complete_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/quest_complete_message"
+            android:textSize="15sp" />
+
+
+        <EditText
+            android:id="@+id/quest_complete_text"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/message_box"
+            android:padding="10dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/quest_complete_picture"
+            android:textSize="15sp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp">
+
+            <ImageView
+                android:id="@+id/quest_complete_picture"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="@drawable/message_box" />
+
+            <ImageView
+                android:id="@+id/quest_complete_qicture_plus"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="right|top"
+                android:layout_margin="10dp"
+                android:src="@drawable/image_plus_button" />
+
+        </FrameLayout>
+
+        <android.widget.Button
+            android:id="@+id/quest_complete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:background="#00ff0000"
+            android:text="수행 완료"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+
+</FrameLayout>

@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">guru2_app</string>
     <string name="mypage_toolbar">마이페이지</string>
+    <string name="last_message_toolbar">지난 칭찬 메세지</string>
+    <string name="last_message_chicken_toolbar">내가 남긴 칭찬 메세지</string>
+    <string name="quest_complete_message">메세지</string>
+    <string name="quest_complete_picture">사진 인증</string>
+    <string name="chick_egg_toolbar">에그 내역</string>
+    <string name="chick_list_toolbar">병아리 목록</string>
 </resources>

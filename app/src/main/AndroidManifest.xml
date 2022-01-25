@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.guru2_android.guru2_app">
+    <!-- 사진, 영상 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -9,6 +11,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Guru2_app">
+        <activity
+            android:name=".ChickenEggActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChickListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChickEggActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LastMessageChickenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LastMessageActivity"
+            android:exported="false" />
         <activity
             android:name=".MypageActivity"
             android:exported="false" />
@@ -26,6 +43,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
