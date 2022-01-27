@@ -3,6 +3,8 @@
     package="com.guru2_android.guru2_app">
     <!-- 사진, 영상 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 푸시 알림 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -50,6 +52,16 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
+        <!-- 푸시 알림 -->
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

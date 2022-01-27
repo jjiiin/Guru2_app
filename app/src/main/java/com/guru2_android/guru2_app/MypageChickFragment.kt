@@ -99,7 +99,10 @@ class MypageChickFragment : Fragment() {
 
                     for (data in snapshot.children) {
                         for (data2 in data.children) {
-                            dateArray.add(data2.key.toString())
+                            if (data2.child("firm").value != null) {
+                                dateArray.add(data2.key.toString())
+                                Log.d("tag", "data2.child(firm) ${data2.child("firm")}")
+                            }
                         }
                     }
                     Log.d("tag", "${dateArray.last()}")
@@ -153,6 +156,7 @@ class MypageChickFragment : Fragment() {
                                     if (data3.getValue() != null) {
                                         val item = data3.getValue<MessageModel>()
                                         message.add(item!!)
+                                        Log.d("tag", "item: ${item}")
                                     }
                                 }
                             }
