@@ -120,6 +120,7 @@ class ChickenEggActivity : AppCompatActivity() {
                 .addValueEventListener(object :
                     ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
+                        historyArray.clear()
                         for (data in snapshot.children) {
                             val item = data.getValue<History>()
                             historyArray.add(item!!)

@@ -52,8 +52,10 @@ class LastMessageChickenActivity : AppCompatActivity() {
                             if (data2.key.toString() == uid) {
                                 for (data3 in data2.children) {
                                     var data4 = data3.child("firm")
-                                    val item = data4.getValue<MessageModel>()
-                                    message.add(item!!)
+                                    if (data4.value != null) {
+                                        val item = data4.getValue<MessageModel>()
+                                        message.add(item!!)
+                                    }
                                 }
                             }
                         }

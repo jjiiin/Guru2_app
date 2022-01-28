@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // 병아리 퀘스트 수행 인증
         binding.button3.setOnClickListener {
 
             completeDialog = LayoutInflater.from(this).inflate(R.layout.quest_complete_dialog, null)
@@ -174,6 +175,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // 닭 퀘스트 수행 확인
         binding.button4.setOnClickListener {
 
             confirmDialog = LayoutInflater.from(this).inflate(R.layout.quest_confirm_dialog, null)
@@ -225,6 +227,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // 이미지 불러오기
     private fun pickImage() {
         var intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
