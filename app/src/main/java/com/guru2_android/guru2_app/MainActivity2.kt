@@ -251,7 +251,7 @@ class MainActivity2 : AppCompatActivity() {
                             val mBuilder= AlertDialog.Builder(this@MainActivity2).setView(mDialogView)
                             val mAlertDialog=mBuilder.show()
 
-                            var sendUid=""
+                            var sendUid=chickUID
                             val searchBtn = mAlertDialog.findViewById<ImageView>(R.id.searchBtn)
                             searchBtn?.setOnClickListener {
                                 val search = mAlertDialog.findViewById<EditText>(R.id.search)?.text.toString()

@@ -25,6 +25,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:visibility="invisible"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
         <View
             android:layout_width="0dp"
