@@ -1,10 +1,7 @@
 package com.guru2_android.guru2_app
 
-import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +10,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
@@ -22,7 +20,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -38,10 +35,9 @@ class ChickenEggActivity : AppCompatActivity() {
     lateinit var editEgg: EditText
     lateinit var contents: EditText
     lateinit var time: String
-    var history = History()
-    private var historyArray: ArrayList<History> = arrayListOf()
     lateinit var egg: String
     lateinit var chickenEggBack: ImageView
+    private var historyArray: ArrayList<History> = arrayListOf()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +45,7 @@ class ChickenEggActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chicken_egg)
 
         chickName = findViewById(R.id.chicken_egg_chick_name)
-        currentEgg = findViewById(R.id.current_egg)
+        currentEgg = findViewById(R.id.current_egg) // 현재 보유한 egg
         confirmBtn = findViewById(R.id.btn_confirm)
         editEgg = findViewById(R.id.edit_egg)
         contents = findViewById(R.id.contents)

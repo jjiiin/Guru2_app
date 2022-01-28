@@ -32,7 +32,8 @@ class MypageChickenFragment : Fragment() {
 
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val uid = Firebase.auth.currentUser?.uid
-        val reference: DatabaseReference = database.getReference("users").child(uid.toString()).child("nickname")
+        val reference: DatabaseReference =
+            database.getReference("users").child(uid.toString()).child("nickname")
         val view = inflater.inflate(R.layout.fragment_mypage_chicken, container, false)
 
         text = view.findViewById(R.id.mypage_chicken_text)
@@ -40,10 +41,9 @@ class MypageChickenFragment : Fragment() {
         chick_list = view.findViewById(R.id.chick_list_layout)
         chicken_message = view.findViewById(R.id.chicken_message_layout)
 
-        reference.addValueEventListener(object: ValueEventListener {
+        reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 nickname = snapshot.value.toString()
-
                 text.text = "${nickname} 님 오늘도 화이팅!"
             }
 
@@ -52,11 +52,13 @@ class MypageChickenFragment : Fragment() {
 
         })
 
+        // 병아리 목록 activity 이동
         chick_list.setOnClickListener {
             val intent = Intent(getActivity(), ChickListActivity::class.java)
             startActivity(intent)
         }
 
+        // 내가 남긴 칭찬 메세지 activity 이동
         chicken_message.setOnClickListener {
             val intent = Intent(getActivity(), LastMessageChickenActivity::class.java)
             startActivity(intent)

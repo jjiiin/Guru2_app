@@ -1,14 +1,13 @@
 package com.guru2_android.guru2_app
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
@@ -38,14 +37,17 @@ class ChickListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = RecyclerViewAdapter()
 
+        // 뒤로가기 버튼 클릭시 finish
         chick_list_back.setOnClickListener {
             finish()
         }
     }
 
+    // 병아리 목록 recycler view로 출력
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.CustomViewHolder>() {
 
         init {
+            // chicken의 child인 병아리 정보를 info 배열에 담음
             FirebaseDatabase.getInstance().reference.child("users").child(uid).child("child")
                 .addValueEventListener(object :
                     ValueEventListener {
@@ -64,6 +66,7 @@ class ChickListActivity : AppCompatActivity() {
                 })
         }
 
+        // item_chick_list로 view holder 생성
         override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
@@ -78,13 +81,15 @@ class ChickListActivity : AppCompatActivity() {
             val textPoint: TextView = itemView.findViewById(R.id.chick_list_point)
         }
 
+        // holder에 info 배열에 저장된 값을 넣음
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
             holder.textName.text = info[position].nickname
             holder.textPoint.text = info[position].point + "p"
 
+            // item을 클릭하면 chick의 egg를 차감하는 페이지로 이동
             holder.itemView.setOnClickListener {
                 val intent = Intent(this@ChickListActivity, ChickenEggActivity::class.java)
-                intent.putExtra("chickUid", chickUid)
+                intent.putExtra("chickUid", chickUid)   // intent에 chickUid를 같이 보냄
                 startActivity(intent)
             }
         }
