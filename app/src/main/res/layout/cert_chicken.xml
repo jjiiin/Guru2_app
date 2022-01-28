@@ -71,7 +71,7 @@
             android:layout_height="30dp"
             android:id="@+id/imgplus"
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="240dp"
+            android:layout_marginLeft="260dp"
             android:src="@drawable/imgplus"/>
         </FrameLayout>
         <TextView

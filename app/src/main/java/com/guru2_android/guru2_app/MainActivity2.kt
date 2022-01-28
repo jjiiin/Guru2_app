@@ -472,9 +472,4 @@ class MainActivity2 : AppCompatActivity() {
         DATE = "${year}.${month}.${day}"//정제된 날짜
         return DATE
     }
-
-//
-//    private fun chicktmp(uid:String){
-//        this.chickUID=uid
-//    }
 }
