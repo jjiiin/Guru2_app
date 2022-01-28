@@ -12,6 +12,7 @@ class FBRef {
         private val store=Firebase.firestore
         //group별 user-database
         val usersRef = database.getReference("users")
+        val userSearchRef = database.getReference("userSearch")
         //할 일 전달하는 데베(RDB)
         val jobRef=database.getReference("job")
         //하루 총평(3단계, 칭찬멘트) 전달하는 데베(FDB)
