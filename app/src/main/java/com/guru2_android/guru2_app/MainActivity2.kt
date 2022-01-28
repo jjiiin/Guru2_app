@@ -393,7 +393,7 @@ class MainActivity2 : AppCompatActivity() {
         val myBtn=findViewById<ImageView>(R.id.my)
          myBtn.setOnClickListener {
              //마이페이지로 넘어가기
-             val intent= Intent(this, MainActivity2::class.java)
+             var intent = Intent(this, MypageActivity::class.java)
              intent.putParcelableArrayListExtra("list", chickList)
              intent.flags= Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
              startActivity(intent)

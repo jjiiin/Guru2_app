@@ -243,9 +243,10 @@ class MainActivity : AppCompatActivity() {
 
         //마이페이지
         val myBtn=findViewById<ImageView>(R.id.my)
-//         myBtn.setOnClickListener {
-//
-//        }
+         myBtn.setOnClickListener {
+             var intent = Intent(this, MypageActivity::class.java)
+             startActivity(intent)
+        }
 
     }
 
