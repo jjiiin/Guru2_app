@@ -3,27 +3,6 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/drawable/ic_baseline_chevron_right_24.xml" value="0.346782431052094" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/drawable/message_box.xml" value="0.3536458333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/activity_chick_egg.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/activity_chick_list.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/activity_chicken_egg.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/activity_join.xml" value="0.33" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/activity_joingroup.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/activity_last_message.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/activity_last_message_chicken.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/activity_login.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/activity_main.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/activity_mypage.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/fragment_mypage_chick.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/fragment_mypage_chicken.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/item_chick_list.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/item_chicken.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/item_egg.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/item_message.xml" value="0.5" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/item_message_chick.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/quest_complete_dialog.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/user/Guru2_app/app/src/main/res/layout/quest_confirm_dialog.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/drawable/edit_round.xml" value="0.2708333333333333" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/activity_join.xml" value="0.264" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/activity_joingroup.xml" value="0.176" />
@@ -37,6 +16,7 @@
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/edit_round.xml" value="0.1" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/firm_dialog.xml" value="0.264" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/input_dialog.xml" value="0.264" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/item_chick_list.xml" value="0.17346014492753623" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/listview_item.xml" value="0.12916666666666668" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/quest_complete_dialog.xml" value="0.1" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/quest_confirm_dialog.xml" value="0.12769153730595895" />
