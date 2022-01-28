@@ -3,11 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/drawable/edit_round.xml" value="0.2708333333333333" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/activity_join.xml" value="0.264" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/activity_joingroup.xml" value="0.176" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/activity_logingroup.xml" value="0.26927083333333335" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/activity_main2.xml" value="0.1" />
         <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/activity_splash.xml" value="0.12944416624937405" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/cert_chicken.xml" value="0.2" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/check_dialog.xml" value="0.17572463768115942" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/edit_round.xml" value="0.1" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/firm_dialog.xml" value="0.264" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/input_dialog.xml" value="0.264" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/listview_item.xml" value="0.12916666666666668" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/quest_complete_dialog.xml" value="0.1" />
+        <entry key="..\:/Users/wjdwl/AndroidStudioProjects/guru2_app/app/src/main/res/layout/quest_confirm_dialog.xml" value="0.12769153730595895" />
       </map>
     </option>
   </component>

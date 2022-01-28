@@ -1,4 +1,4 @@
-package com.guru2_android.guru2_app
+package com.guru2_android.guru2_app.auth
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +11,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.guru2_android.guru2_app.MainActivity
+import com.guru2_android.guru2_app.MainActivity2
+import com.guru2_android.guru2_app.R
+import com.guru2_android.guru2_app.dataModel.UserData
 import com.guru2_android.guru2_app.databinding.ActivityJoinBinding
 
 class JoinActivity : AppCompatActivity() {
@@ -20,8 +24,9 @@ class JoinActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        auth= Firebase.auth
+
         store=Firebase.firestore
+        auth= Firebase.auth
         binding= DataBindingUtil.setContentView(this, R.layout.activity_join)
         binding.joinBtn.setOnClickListener {
 
@@ -56,13 +61,21 @@ class JoinActivity : AppCompatActivity() {
                         Toast.makeText(this,"성공",Toast.LENGTH_LONG).show()
 
                         //회원 데이터베이스에 이메일, 닉네임, 그룹 정보 저장
-                        val userData = UserData(id,name,group)
-                            FBRef.usersRef.child(auth.currentUser!!.uid).setValue(userData)//RDB
-
+                        val userData = UserData(id,name,group,auth.currentUser!!.uid)
+                        FBRef.usersRef.child(auth.currentUser!!.uid).setValue(userData)//RDB
+                        FBRef.userSearchRef.child(name).setValue(userData)
                         //병아리 회원(group1)or 닭회원(group2)별로 보이는 액티비티 나누기(추후)
-                        val intent= Intent(this, MainActivity::class.java)
-                        intent.flags= Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
+                        //병아리 회원일 때,
+                        if(group=="1"){
+                            val intent= Intent(this, MainActivity::class.java)
+                            intent.flags= Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            }else{ //닭회원일 때(group="2")
+                            val intent= Intent(this, MainActivity2::class.java)
+                            intent.flags= Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+
+                        }
 
                     } else {
                         Toast.makeText(this,"실패",Toast.LENGTH_LONG).show()
