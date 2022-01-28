@@ -232,7 +232,7 @@ class MainActivity : AppCompatActivity() {
 
                     //퀘스트 수행 완료 egg내역에 추가(위에랑 같이 움직이기)
                     val eggRef=database.getReference(auth.currentUser?.uid.toString()).child("egg")
-                    val eggModel= eggModel(dateText,item.egg,item.title)
+                    val eggModel= eggModel(dateChange,item.egg,item.title)
                     eggRef.push().setValue(eggModel)
 
                     mAlertDialog.dismiss()
