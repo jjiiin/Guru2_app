@@ -2,24 +2,27 @@ package com.guru2_android.guru2_app
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
+import com.guru2_android.guru2_app.auth.LoginActivity
+import java.util.ArrayList
 
 class MypageChickenFragment : Fragment() {
 
     lateinit var text: TextView
-    lateinit var settings: ImageView
     lateinit var nickname: String
     lateinit var chick_list: LinearLayout
     lateinit var chicken_message: LinearLayout
+    lateinit var logout: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,10 +40,11 @@ class MypageChickenFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_mypage_chicken, container, false)
 
         text = view.findViewById(R.id.mypage_chicken_text)
-        settings = view.findViewById(R.id.mypage_chicken_settings)
         chick_list = view.findViewById(R.id.chick_list_layout)
         chicken_message = view.findViewById(R.id.chicken_message_layout)
+        logout = view.findViewById(R.id.mypage_chicken_logout)
 
+        // 닭 닉네임 출력
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 nickname = snapshot.value.toString()
@@ -52,9 +56,23 @@ class MypageChickenFragment : Fragment() {
 
         })
 
+        // 로그아웃 버튼 클릭
+        logout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(getActivity(), LoginActivity::class.java)
+            activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            Toast.makeText(getActivity(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+            startActivity(intent)
+        }
+
+        // 닭의 병아리 리스트 받아오기
+        val chickList = arguments?.getSerializable("list")
+
         // 병아리 목록 activity 이동
         chick_list.setOnClickListener {
             val intent = Intent(getActivity(), ChickListActivity::class.java)
+            intent.putParcelableArrayListExtra("list", chickList as ArrayList<out Parcelable>?)
             startActivity(intent)
         }
 

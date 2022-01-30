@@ -2,6 +2,7 @@ package com.guru2_android.guru2_app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,13 +17,15 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.guru2_android.guru2_app.dataModel.eggModel
+import com.guru2_android.guru2_app.dataModel.messageModel
 
 class ChickEggActivity : AppCompatActivity() {
 
     val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     val uid = Firebase.auth.currentUser?.uid.toString()
 
-    private var history: ArrayList<History> = arrayListOf()
+    private var history: ArrayList<eggModel> = arrayListOf()
     lateinit var currentEggText: TextView
     lateinit var chickEggBack: ImageView
 
@@ -42,23 +45,16 @@ class ChickEggActivity : AppCompatActivity() {
             finish()
         }
 
-        FirebaseDatabase.getInstance().reference.child("users").addValueEventListener(object :
+        FirebaseDatabase.getInstance().reference.child(uid).child("egg").addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (data in snapshot.children) {
-                    val data2 = data.child("child")
-                    if (data2.value != null) {
-                        for (data3 in data2.children) {
-                            if (data3.key == uid) {
-                                currentEggText.text = "현재 보유한 에그 : "+data3.child("info/point").getValue().toString() + "egg"
-
-                                val data4 = data3.child("history")
-                                for (data5 in data4.children) {
-                                    val item = data5.getValue<History>()
-                                    history.add(item!!)
-                                }
-                            }
-                        }
+                    if (data.key == "totalEgg") {
+                        currentEggText.text = "현재 보유한 에그 : " + data.child("egg").value.toString() + "egg"
+                    }
+                    if (data.key != "totalEgg") {
+                        val item = data.getValue<eggModel>()
+                        history.add(item!!)
                     }
                 }
                 history.reverse()
@@ -90,8 +86,8 @@ class ChickEggActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
             holder.textDate.text = history[position].date
-            holder.textContents.text = history[position].contents
-            holder.textEgg.text = history[position].calc
+            holder.textContents.text = history[position].title
+            holder.textEgg.text = history[position].egg
         }
 
         override fun getItemCount(): Int {

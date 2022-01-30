@@ -17,20 +17,24 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.guru2_android.guru2_app.dataModel.messChicken
 
 class LastMessageChickenActivity : AppCompatActivity() {
 
     val uid = Firebase.auth.currentUser?.uid.toString()
-    private var message: ArrayList<MessageModel> = arrayListOf()
-    lateinit var chicken_nickname: String
+    private var message: ArrayList<messChicken> = arrayListOf()
     lateinit var lastMessageChickenBack: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_last_message_chicken)
 
+        // 뒤로 가기 버튼
         lastMessageChickenBack = findViewById(R.id.last_message_chicken_back)
 
+
+
+        // 리사이클러뷰
         val recyclerView = findViewById<RecyclerView>(R.id.chicken_last_message_recyclerview)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -44,21 +48,13 @@ class LastMessageChickenActivity : AppCompatActivity() {
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.CustomViewHolder>() {
 
         init {
-            FirebaseDatabase.getInstance().reference.child("quest").addValueEventListener(object :
+            // 병아리에게 보낸 메세지를 모델로 가져옴
+            FirebaseDatabase.getInstance().reference.child(uid).child("message").addValueEventListener(object :
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (data in snapshot.children) {
-                        for (data2 in data.children) {
-                            if (data2.key.toString() == uid) {
-                                for (data3 in data2.children) {
-                                    var data4 = data3.child("firm")
-                                    if (data4.value != null) {
-                                        val item = data4.getValue<MessageModel>()
-                                        message.add(item!!)
-                                    }
-                                }
-                            }
-                        }
+                        val item = data.getValue<messChicken>()
+                        message.add(item!!)
                     }
                     message.reverse()
                 }
@@ -85,9 +81,10 @@ class LastMessageChickenActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-            holder.textName.text = message[position].chick_nickname
-            holder.textDate.text = message[position].time
-            holder.textChat.text = message[position].message
+
+            holder.textName.text = message[position].chickname
+            holder.textDate.text = message[position].date
+            holder.textChat.text = message[position].mess
         }
 
         override fun getItemCount(): Int {

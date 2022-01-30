@@ -43,7 +43,7 @@
                     android:id="@+id/chick_egg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="egg" />
+                    android:text="0egg" />
 
                 <ImageView
                     android:layout_width="20dp"
@@ -56,10 +56,10 @@
 
 
         <ImageView
-            android:id="@+id/mypage_chick_settings"
+            android:id="@+id/mypage_chick_logout"
             android:layout_width="20dp"
             android:layout_height="22dp"
-            android:src="@drawable/ic_baseline_settings_24" />
+            android:src="@drawable/ic_baseline_logout_24" />
 
     </LinearLayout>
 

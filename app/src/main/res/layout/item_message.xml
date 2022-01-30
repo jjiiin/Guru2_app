@@ -18,40 +18,42 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:id="@+id/message_item_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="15dp"
-        android:text="닭 이름"
-        android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!--    <TextView-->
+    <!--        android:id="@+id/message_item_name"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="8dp"-->
+    <!--        android:layout_marginTop="15dp"-->
+    <!--        android:text="닭 이름"-->
+    <!--        android:textSize="16sp"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/imageView"-->
+    <!--        app:layout_constraintTop_toTopOf="parent" />-->
 
     <TextView
         android:id="@+id/message_item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="50dp"
         android:text="날짜"
         android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/message_item_name" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/message_item_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="5dp"
         android:layout_marginBottom="15dp"
         android:text="채팅"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/message_item_date" />
+        app:layout_constraintTop_toBottomOf="@+id/message_item_date"
+        app:layout_constraintVertical_bias="0.216" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -75,6 +77,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/message_item_date" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

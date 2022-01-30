@@ -505,6 +505,7 @@ class MainActivity2 : AppCompatActivity() {
              //마이페이지로 넘어가기
              var intent = Intent(this, MypageActivity::class.java)
              intent.putParcelableArrayListExtra("list", chickList)
+             Log.d("MainActivity2 tag", "chickList ${chickList}")
              intent.flags= Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
              startActivity(intent)
      }

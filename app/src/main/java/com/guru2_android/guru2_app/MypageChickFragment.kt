@@ -3,39 +3,34 @@ package com.guru2_android.guru2_app
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.guru2_android.guru2_app.auth.LoginActivity
+import com.guru2_android.guru2_app.dataModel.messageModel
 
 class MypageChickFragment : Fragment() {
 
-    companion object {
-        fun newInstance(): MypageChickFragment {
-            return MypageChickFragment()
-        }
-    }
-
     val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     val uid = Firebase.auth.currentUser?.uid.toString()
-    private var message: ArrayList<MessageModel> = arrayListOf()
-    private var dateArray: ArrayList<String> = arrayListOf()
+    private var message: ArrayList<messageModel> = arrayListOf()
+    private var recentMessage = messageModel()
 
     lateinit var text: TextView
-    lateinit var settings: ImageView
     lateinit var nickname: String
     lateinit var last_message: LinearLayout
     lateinit var eggLayout: LinearLayout
     lateinit var egg: TextView
+    lateinit var logout: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,11 +50,12 @@ class MypageChickFragment : Fragment() {
         recyclerView.adapter = RecyclerViewAdapter()
 
         text = view.findViewById(R.id.mypage_chick_text)
-        settings = view.findViewById(R.id.mypage_chick_settings)
         last_message = view.findViewById(R.id.chick_last_message_layout)
         eggLayout = view.findViewById(R.id.chick_egg_layout)
         egg = view.findViewById(R.id.chick_egg)
+        logout = view.findViewById(R.id.mypage_chick_logout)
 
+        // 병아리의 닉네임 출력
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 nickname = snapshot.value.toString()
@@ -72,40 +68,25 @@ class MypageChickFragment : Fragment() {
 
         })
 
-        FirebaseDatabase.getInstance().reference.child("users").addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (data in snapshot.children) {
-                    val data2 = data.child("child")
-                    if (data2.value != null) {
-                        for (data3 in data2.children) {
-                            if (data3.key == uid) {
-                                val info = data3.child("info")
-                                egg.text = info.child("point").value.toString() + "egg"
-                            }
-                        }
-                    }
-                }
-            }
+        // 로그아웃 버튼 클릭
+        logout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(getActivity(), LoginActivity::class.java)
+            activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            Toast.makeText(getActivity(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+            startActivity(intent)
+        }
 
-            override fun onCancelled(error: DatabaseError) {
-            }
-
-        })
-
-        FirebaseDatabase.getInstance().reference.child("quest").child(uid)
-            .addValueEventListener(object : ValueEventListener {
+        // 현재 병아리가 소유한 egg 출력
+        database.reference.child(uid).child("egg").child("totalEgg")
+            .addValueEventListener(object :
+                ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-
                     for (data in snapshot.children) {
-                        for (data2 in data.children) {
-                            if (data2.child("firm").value != null) {
-                                dateArray.add(data2.key.toString())
-                                Log.d("tag", "data2.child(firm) ${data2.child("firm")}")
-                            }
-                        }
+                        var item = data.value
+                        egg.text = item.toString() + "egg"
                     }
-                    Log.d("tag", "${dateArray.last()}")
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -113,11 +94,13 @@ class MypageChickFragment : Fragment() {
 
             })
 
+        // 지난 칭찬 메세지 activity로 이동
         last_message.setOnClickListener {
             val intent = Intent(getActivity(), LastMessageActivity::class.java)
             startActivity(intent)
         }
 
+        // 병아리 egg를 클릭하면 egg 내역을 확인하는 activity로 이동
         eggLayout.setOnClickListener {
             val intent = Intent(getActivity(), ChickEggActivity::class.java)
             startActivity(intent)
@@ -128,43 +111,19 @@ class MypageChickFragment : Fragment() {
 
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.CustomViewHolder>() {
 
+        // 받은 메세지 목록을 배열에 담은 뒤 가장 최근 메세지 하나만 recentMessage 변수에 담음
         init {
-            FirebaseDatabase.getInstance().reference.child("quest").child(uid)
+            FirebaseDatabase.getInstance().reference.child(uid).child("message")
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-
                         for (data in snapshot.children) {
-                            for (data2 in data.children) {
-                                if (data2.child("firm").value != null) {
-                                    dateArray.add(data2.key.toString())
-                                }
-                            }
+                            val item = data.getValue<messageModel>()
+                            message.add(item!!)
                         }
-                        Log.d("tag", "dateArray: ${dateArray}")
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                    }
-
-                })
-
-            FirebaseDatabase.getInstance().reference.child("quest").child(uid)
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-
-                        for (data in snapshot.children) {
-                            for (data2 in data.children) {
-                                if (data2.key.toString() == dateArray.last().toString()) {
-                                    var data3 = data2.child("firm")
-                                    if (data3.getValue() != null) {
-                                        val item = data3.getValue<MessageModel>()
-                                        message.add(item!!)
-                                        Log.d("tag", "item: ${item}")
-                                    }
-                                }
-                            }
+                        message.reverse()
+                        if (message.size != 0) {    // 메세지 목록이 있을 경우 최근 메세지 변수에 담음
+                            recentMessage = message[0]
                         }
-
                         notifyDataSetChanged()
                     }
 
@@ -184,18 +143,19 @@ class MypageChickFragment : Fragment() {
         }
 
         inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val textName: TextView = itemView.findViewById(R.id.message_item_name)
             val textDate: TextView = itemView.findViewById(R.id.message_item_date)
             val textChat: TextView = itemView.findViewById(R.id.message_item_text)
         }
 
         override fun onBindViewHolder(holder: RecyclerViewAdapter.CustomViewHolder, position: Int) {
-            holder.textName.text = message[position].chicken_nickname
-            holder.textDate.text = message[position].time
-            holder.textChat.text = message[position].message
+            holder.textDate.text = recentMessage.date   // 메세지 받은 날짜
+            holder.textChat.text = recentMessage.mess   // 메세지 내용
         }
 
         override fun getItemCount(): Int {
+            if (message.size != 0) {    // 메세지 목록이 존재할 때만 최근 메세지 하나 출력
+                return 1
+            }
             return message.size
         }
 
