@@ -16,52 +16,52 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.guru2_android.guru2_app.LastMessageActivity.RecyclerViewAdapter.CustomViewHolder
+import com.guru2_android.guru2_app.dataModel.messageModel
 
 class LastMessageActivity : AppCompatActivity() {
 
     val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     val uid = Firebase.auth.currentUser?.uid.toString()
-    private var message: ArrayList<MessageModel> = arrayListOf()
+    private var message: ArrayList<messageModel> = arrayListOf()
     lateinit var lastMessageBack: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_last_message)
 
+        // 뒤로 가기 버튼
         lastMessageBack = findViewById(R.id.last_message_back)
+        lastMessageBack.setOnClickListener {
+            finish()
+        }
 
         val recyclerView = findViewById<RecyclerView>(R.id.chick_last_message_recyclerview)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = RecyclerViewAdapter()
 
-        lastMessageBack.setOnClickListener {
-            finish()
-        }
+
     }
 
     inner class RecyclerViewAdapter : RecyclerView.Adapter<CustomViewHolder>() {
 
+        // 받은 칭찬 메세지 목록을 message 배열에 담음
         init {
-            FirebaseDatabase.getInstance().reference.child("quest").child(uid).addValueEventListener(object :
-                ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    for(data in snapshot.children) {
-                        for (data2 in data.children) {
-                            var data3 = data2.child("firm")
-                            if (data3.getValue() != null) {
-                                val item = data3.getValue<MessageModel>()
-                                message.add(item!!)
-                            }
+            FirebaseDatabase.getInstance().reference.child(uid).child("message")
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for (data in snapshot.children) {
+                            val item = data.getValue<messageModel>()
+                            message.add(item!!)
                         }
+                        message.reverse()   // 최근 순으로 재정렬
+                        notifyDataSetChanged()
                     }
-                    message.reverse()
-                }
 
-                override fun onCancelled(error: DatabaseError) {
-                }
+                    override fun onCancelled(error: DatabaseError) {
+                    }
 
-            })
+                })
         }
 
         override fun onCreateViewHolder(
@@ -73,15 +73,13 @@ class LastMessageActivity : AppCompatActivity() {
         }
 
         inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val textName: TextView = itemView.findViewById(R.id.message_item_name)
             val textDate: TextView = itemView.findViewById(R.id.message_item_date)
             val textChat: TextView = itemView.findViewById(R.id.message_item_text)
         }
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-            holder.textName.text = message[position].chicken_nickname
-            holder.textDate.text = message[position].time
-            holder.textChat.text = message[position].message
+            holder.textDate.text = message[position].date
+            holder.textChat.text = message[position].mess
         }
 
         override fun getItemCount(): Int {

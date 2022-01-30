@@ -71,6 +71,12 @@
         android:text="프로필 수정"
         style="@style/Widget.AppCompat.Button.Borderless"/>
 
+    <Button
+        android:id="@+id/chickBtnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="로그인"/>
+
     <LinearLayout
         android:id="@+id/chick_last_message_layout"
         android:layout_width="match_parent"

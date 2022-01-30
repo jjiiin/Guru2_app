@@ -3,19 +3,22 @@ package com.guru2_android.guru2_app
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.guru2_android.guru2_app.auth.LoginActivity
+import com.guru2_android.guru2_app.dataModel.messageModel
 
 class MypageChickFragment : Fragment() {
 
@@ -27,8 +30,8 @@ class MypageChickFragment : Fragment() {
 
     val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     val uid = Firebase.auth.currentUser?.uid.toString()
-    private var message: ArrayList<MessageModel> = arrayListOf()
-    private var dateArray: ArrayList<String> = arrayListOf()
+    private var message: ArrayList<messageModel> = arrayListOf()
+    private var recentMessage = messageModel()
 
     lateinit var text: TextView
     lateinit var settings: ImageView
@@ -36,6 +39,8 @@ class MypageChickFragment : Fragment() {
     lateinit var last_message: LinearLayout
     lateinit var eggLayout: LinearLayout
     lateinit var egg: TextView
+
+    lateinit var chickLogin: Button     // 수정 후 삭제
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +65,13 @@ class MypageChickFragment : Fragment() {
         eggLayout = view.findViewById(R.id.chick_egg_layout)
         egg = view.findViewById(R.id.chick_egg)
 
+        chickLogin = view.findViewById(R.id.chickBtnLogin)  // 수정 후 로그인 버튼 삭제
+        chickLogin.setOnClickListener {
+            val intent = Intent(getActivity(), LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 병아리의 닉네임 출력
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 nickname = snapshot.value.toString()
@@ -72,40 +84,15 @@ class MypageChickFragment : Fragment() {
 
         })
 
-        FirebaseDatabase.getInstance().reference.child("users").addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (data in snapshot.children) {
-                    val data2 = data.child("child")
-                    if (data2.value != null) {
-                        for (data3 in data2.children) {
-                            if (data3.key == uid) {
-                                val info = data3.child("info")
-                                egg.text = info.child("point").value.toString() + "egg"
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-            }
-
-        })
-
-        FirebaseDatabase.getInstance().reference.child("quest").child(uid)
-            .addValueEventListener(object : ValueEventListener {
+        // 현재 병아리가 소유한 egg 출력력
+        FirebaseDatabase.getInstance().reference.child(uid).child("egg").child("totalEgg")
+            .addValueEventListener(object :
+                ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-
                     for (data in snapshot.children) {
-                        for (data2 in data.children) {
-                            if (data2.child("firm").value != null) {
-                                dateArray.add(data2.key.toString())
-                                Log.d("tag", "data2.child(firm) ${data2.child("firm")}")
-                            }
-                        }
+                        val item = data.value
+                        egg.text = item.toString() + "egg"
                     }
-                    Log.d("tag", "${dateArray.last()}")
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -113,11 +100,13 @@ class MypageChickFragment : Fragment() {
 
             })
 
+        // 지난 칭찬 메세지 activity로 이동
         last_message.setOnClickListener {
             val intent = Intent(getActivity(), LastMessageActivity::class.java)
             startActivity(intent)
         }
 
+        // 병아리 egg를 클릭하면 egg 내역을 확인하는 activity로 이동
         eggLayout.setOnClickListener {
             val intent = Intent(getActivity(), ChickEggActivity::class.java)
             startActivity(intent)
@@ -128,43 +117,17 @@ class MypageChickFragment : Fragment() {
 
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.CustomViewHolder>() {
 
+        // 받은 메세지 목록을 배열에 담은 뒤 가장 최근 메세지 하나만 recentMessage 변수에 담음
         init {
-            FirebaseDatabase.getInstance().reference.child("quest").child(uid)
+            FirebaseDatabase.getInstance().reference.child(uid).child("message")
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-
                         for (data in snapshot.children) {
-                            for (data2 in data.children) {
-                                if (data2.child("firm").value != null) {
-                                    dateArray.add(data2.key.toString())
-                                }
-                            }
+                            val item = data.getValue<messageModel>()
+                            message.add(item!!)
                         }
-                        Log.d("tag", "dateArray: ${dateArray}")
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                    }
-
-                })
-
-            FirebaseDatabase.getInstance().reference.child("quest").child(uid)
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-
-                        for (data in snapshot.children) {
-                            for (data2 in data.children) {
-                                if (data2.key.toString() == dateArray.last().toString()) {
-                                    var data3 = data2.child("firm")
-                                    if (data3.getValue() != null) {
-                                        val item = data3.getValue<MessageModel>()
-                                        message.add(item!!)
-                                        Log.d("tag", "item: ${item}")
-                                    }
-                                }
-                            }
-                        }
-
+                        message.reverse()
+                        recentMessage = message[0]
                         notifyDataSetChanged()
                     }
 
@@ -184,19 +147,17 @@ class MypageChickFragment : Fragment() {
         }
 
         inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val textName: TextView = itemView.findViewById(R.id.message_item_name)
             val textDate: TextView = itemView.findViewById(R.id.message_item_date)
             val textChat: TextView = itemView.findViewById(R.id.message_item_text)
         }
 
         override fun onBindViewHolder(holder: RecyclerViewAdapter.CustomViewHolder, position: Int) {
-            holder.textName.text = message[position].chicken_nickname
-            holder.textDate.text = message[position].time
-            holder.textChat.text = message[position].message
+            holder.textDate.text = recentMessage.date
+            holder.textChat.text = recentMessage.mess
         }
 
         override fun getItemCount(): Int {
-            return message.size
+            return 1
         }
 
     }

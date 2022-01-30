@@ -2,9 +2,12 @@ package com.guru2_android.guru2_app
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -12,6 +15,8 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
+import com.guru2_android.guru2_app.auth.LoginActivity
+import java.util.ArrayList
 
 class MypageChickenFragment : Fragment() {
 
@@ -20,6 +25,8 @@ class MypageChickenFragment : Fragment() {
     lateinit var nickname: String
     lateinit var chick_list: LinearLayout
     lateinit var chicken_message: LinearLayout
+
+    lateinit var chickenLogin: Button   //수정 후 삭제
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +48,13 @@ class MypageChickenFragment : Fragment() {
         chick_list = view.findViewById(R.id.chick_list_layout)
         chicken_message = view.findViewById(R.id.chicken_message_layout)
 
+        chickenLogin = view.findViewById(R.id.chickenBtnLogin)  // 수정 후 로그인 버튼 삭제
+        chickenLogin.setOnClickListener {
+            val intent = Intent(getActivity(), LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 닭 닉네임 출력
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 nickname = snapshot.value.toString()
@@ -52,9 +66,13 @@ class MypageChickenFragment : Fragment() {
 
         })
 
+        // 닭의 병아리 리스트 받아오기
+        val chickList = arguments?.getSerializable("list")
+
         // 병아리 목록 activity 이동
         chick_list.setOnClickListener {
             val intent = Intent(getActivity(), ChickListActivity::class.java)
+            intent.putParcelableArrayListExtra("list", chickList as ArrayList<out Parcelable>?)
             startActivity(intent)
         }
 
