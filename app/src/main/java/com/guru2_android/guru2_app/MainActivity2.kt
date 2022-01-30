@@ -41,20 +41,19 @@ class MainActivity2 : AppCompatActivity() {
     val dataModelList = mutableListOf<jobModel>()
     val chickList = arrayListOf<chickModel>()
     val chickNameList = arrayListOf<String>()
-//    val chickNameList = arrayListOf<String>()
-    val chickListH = HashSet<chickModel>()
-    val chickNameListH = HashSet<String>()
+    val chickListTemp = arrayListOf<chickModel>()
+    val chickNameListTemp=arrayListOf<String>()
     private fun clearSpinner(){
-        this.chickListH.clear()
-        this.chickNameListH.clear()
+        this.chickListTemp.clear()
+        this.chickNameListTemp.clear()
     }
     private fun updateSpinner(item:chickModel){
-        this.chickListH.add(item)
+        this.chickListTemp.add(item)
         Log.d("fun_chick",item.toString())
     }
 
     private fun updateNameSpinner(name:String){
-        this.chickNameListH.add(name)
+        this.chickNameListTemp.add(name)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,16 +107,13 @@ class MainActivity2 : AppCompatActivity() {
                         updateNameSpinner(item.name)
                     }
                 }
-                //Hashset을 array로
-                for (data in chickListH) {
+                //중복 값 지우기
+                chickList.clear()
+                chickNameList.clear()
+                for (data in chickListTemp.distinct()) {
                     chickList.add(data)
                     chickNameList.add(data.name)
                 }
-                Log.d("chick_array", chickList.toString())
-                Log.d("chick_hash", chickListH.toString())
-//                val chickNameList= arrayOf<String>()
-//                chickNameListH.toArray(chickNameList)
-
 
                 //오늘 날짜를 노랑 볼드체로 표시하기
                 val todayDecorator = TodayDecorator(this@MainActivity2)
