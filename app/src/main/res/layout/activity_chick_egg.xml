@@ -51,7 +51,7 @@
             android:id="@+id/chick_current_egg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="현재 보유한 에그 : 30egg"
+            android:text="현재 보유한 에그 : 0egg"
             android:textSize="20sp"
             android:textStyle="bold" />
 

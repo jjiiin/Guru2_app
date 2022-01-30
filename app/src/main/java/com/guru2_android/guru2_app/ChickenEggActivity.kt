@@ -41,7 +41,6 @@ class ChickenEggActivity : AppCompatActivity() {
     lateinit var chickenEggBack: ImageView
 
     private var eggArray: ArrayList<eggModel> = arrayListOf()
-    private var historyArray: ArrayList<History> = arrayListOf()    // 수정 후 삭제
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,13 +53,14 @@ class ChickenEggActivity : AppCompatActivity() {
         editEgg = findViewById(R.id.edit_egg)
         contents = findViewById(R.id.contents)
         chickenEggBack = findViewById(R.id.chicken_egg_back)
-        chickUid = intent.getStringExtra("chickUid").toString()
+        chickUid = intent.getStringExtra("chickUid").toString() // 인텐트로 병아리 uid 받아 옴
 
         val recyclerView = findViewById<RecyclerView>(R.id.chicken_egg_recyclerview)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = RecyclerViewAdapter()
 
+        // 뒤로 가기 버튼 클릭시 finish
         chickenEggBack.setOnClickListener {
             finish()
         }
@@ -100,14 +100,14 @@ class ChickenEggActivity : AppCompatActivity() {
 
         // 확인 버튼을 누르면 egg 내역 추가, total egg 차감
         confirmBtn.setOnClickListener {
-            // 날짜
+            // 날짜 형식 지정
             val current = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
             time = current.format(formatter)
             val formatter2 = DateTimeFormatter.ofPattern("yyyy.MM.dd")
             val date = current.format(formatter2)
 
-            // egg 내역 firebase에 추가
+            // egg 차감 내역 firebase에 추가
             val eggRef = database.reference.child(chickUid).child("egg")
             val eggModel = eggModel(date, "-" + editEgg.text.toString(), contents.text.toString())
             eggRef.push().setValue(eggModel)
@@ -127,13 +127,13 @@ class ChickenEggActivity : AppCompatActivity() {
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.CustomViewHolder>() {
 
         init {
-
+            // egg 내역을 배열에 담음
             FirebaseDatabase.getInstance().reference.child(chickUid).child("egg")
                 .addValueEventListener(object :
                     ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         for (data in snapshot.children) {
-                            if (data.key != "totalEgg") {
+                            if (data.key != "totalEgg") {   // totalEgg를 제외 한 egg 내역을 eggArray에 담음
                                 val item = data.getValue<eggModel>()
                                 eggArray.add(item!!)
                             }
@@ -159,13 +159,12 @@ class ChickenEggActivity : AppCompatActivity() {
         }
 
         inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val textDate: TextView = itemView.findViewById(R.id.egg_date)
-            val textContents: TextView = itemView.findViewById(R.id.egg_contents)
-            val textEgg: TextView = itemView.findViewById(R.id.egg_op)
+            val textDate: TextView = itemView.findViewById(R.id.egg_date)   // egg가 수정된 날짜
+            val textContents: TextView = itemView.findViewById(R.id.egg_contents)   // egg 수정 내용
+            val textEgg: TextView = itemView.findViewById(R.id.egg_op)  // 차감, 증가한 egg
         }
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-            Log.d("tag", "egg array : ${eggArray}")
             holder.textDate.text = eggArray[position].date
             holder.textContents.text = eggArray[position].title
             holder.textEgg.text = eggArray[position].egg

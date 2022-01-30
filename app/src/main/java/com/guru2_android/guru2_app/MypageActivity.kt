@@ -24,9 +24,10 @@ class MypageActivity : AppCompatActivity() {
         val reference: DatabaseReference =
             database.getReference("users").child(uid.toString()).child("group")
 
-        // 뒤로가기 버튼
+        // 뒤로 가기 버튼
         back = findViewById(R.id.mypage_back)
 
+        // 뒤로 가기 버튼을 클릭했을 때
         back.setOnClickListener {
             reference.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {

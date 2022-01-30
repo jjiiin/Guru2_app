@@ -53,29 +53,11 @@ class ChickEggActivity : AppCompatActivity() {
                         currentEggText.text = "현재 보유한 에그 : " + data.child("egg").value.toString() + "egg"
                     }
                     if (data.key != "totalEgg") {
-                        //Log.d("tag", "에그 내역 : ${data}")
                         val item = data.getValue<eggModel>()
                         history.add(item!!)
                     }
                 }
                 history.reverse()
-//                for (data in snapshot.children) {
-//                    val data2 = data.child("child")
-//                    if (data2.value != null) {
-//                        for (data3 in data2.children) {
-//                            if (data3.key == uid) {
-//                                currentEggText.text = "현재 보유한 에그 : "+data3.child("info/point").getValue().toString() + "egg"
-//
-//                                val data4 = data3.child("history")
-//                                for (data5 in data4.children) {
-//                                    val item = data5.getValue<History>()
-//                                    history.add(item!!)
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                history.reverse()
             }
 
             override fun onCancelled(error: DatabaseError) {
