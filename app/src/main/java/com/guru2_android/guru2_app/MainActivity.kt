@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
       private lateinit var dateText:String
       private lateinit var dateChange:String
 //    private lateinit var selectedDay: CalendarDay
+    private var currentEgg = "0"    // 현재 egg
     private val pickStorage = 1001
     var setImage: Boolean = false
     var questPicture: Uri? = null
@@ -82,6 +83,20 @@ class MainActivity : AppCompatActivity() {
         val currentMonth = startTimeCalendar.get(Calendar.MONTH)
         val currentDate = startTimeCalendar.get(Calendar.DATE)
         endTimeCalendar.set(Calendar.MONTH, currentMonth + 3)
+
+        // 현재 egg 가져오기
+        FirebaseDatabase.getInstance().reference.child(auth.currentUser?.uid.toString()).child("egg").child("totalEgg")
+            .addValueEventListener(object :
+                ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    currentEgg = snapshot.child("egg").value.toString()
+                    if (currentEgg == "null") {    //egg가 없을 경우 0으로 지정
+                        currentEgg = "0"
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
 
         materialCalendar.state().edit()
             .setFirstDayOfWeek(Calendar.SUNDAY)
@@ -234,6 +249,12 @@ class MainActivity : AppCompatActivity() {
                     val eggRef=database.getReference(auth.currentUser?.uid.toString()).child("egg")
                     val eggModel= eggModel(dateChange,item.egg,item.title)
                     eggRef.push().setValue(eggModel)
+
+                    // 퀘스트 수행 완료시 egg 추가
+                    val changeEgg = currentEgg.toInt() + item.egg.toInt()
+                    Log.d("tag", "currentEgg : ${currentEgg}")
+                    Log.d("tag", "item.egg : ${item.egg}")
+                    eggRef.child("totalEgg").child("egg").setValue(changeEgg.toString())
 
                     mAlertDialog.dismiss()
                     //setResult(RESULT_OK)

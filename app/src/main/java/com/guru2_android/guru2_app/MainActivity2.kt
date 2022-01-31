@@ -372,12 +372,29 @@ class MainActivity2 : AppCompatActivity() {
                                 //Log.d("Firmday",selectedDay.toString())
                                 myRef.push().setValue(model)
 
+                                // 현재 egg 가져오기
+                                FirebaseDatabase.getInstance().reference.child(chickUID).child("egg").child("totalEgg")
+                                    .addValueEventListener(object :
+                                        ValueEventListener {
+                                        override fun onDataChange(snapshot: DataSnapshot) {
+                                            currentEgg = snapshot.child("egg").value.toString()
+                                            if (currentEgg == "null") {    //egg가 없을 경우 0으로 지정
+                                                currentEgg = "0"
+                                            }
+                                        }
+                                        override fun onCancelled(error: DatabaseError) {
+                                        }
+                                    })
+
                                 //good일 경우 10egg추가하기
                                 if (firm == "3") {
                                     val eggRef = database.getReference(chickUID).child("egg")
                                     val eggModel = eggModel(dateChange, "10", "Bonus EGG")
                                     eggRef.push().setValue(eggModel)
 
+                                    // total egg 수정
+                                    val changeEgg = currentEgg.toInt() + 10
+                                    eggRef.child("totalEgg").child("egg").setValue(changeEgg.toString())
                                 }
                                 val messRef = database.getReference(chickUID).child("message")
                                 val messchickRef =
