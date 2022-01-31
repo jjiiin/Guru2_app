@@ -34,27 +34,29 @@ class MainActivity2 : AppCompatActivity() {
     //닭회원일 때
     private lateinit var auth: FirebaseAuth
     private lateinit var dateText: String
-    private lateinit var dateChange:String
+    private lateinit var dateChange: String
 
-
+    private var currentEgg = "0"    // 현재 egg
     lateinit var mCheckDialogView: View
     val dataModelList = mutableListOf<jobModel>()
     val chickList = arrayListOf<chickModel>()
     val chickNameList = arrayListOf<String>()
     val chickListTemp = arrayListOf<chickModel>()
-    val chickNameListTemp=arrayListOf<String>()
-    private fun clearSpinner(){
+    val chickNameListTemp = arrayListOf<String>()
+    private fun clearSpinner() {
         this.chickListTemp.clear()
         this.chickNameListTemp.clear()
     }
-    private fun updateSpinner(item:chickModel){
+
+    private fun updateSpinner(item: chickModel) {
         this.chickListTemp.add(item)
-        Log.d("fun_chick",item.toString())
+        Log.d("fun_chick", item.toString())
     }
 
-    private fun updateNameSpinner(name:String){
+    private fun updateNameSpinner(name: String) {
         this.chickNameListTemp.add(name)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
@@ -63,7 +65,7 @@ class MainActivity2 : AppCompatActivity() {
         var startTimeCalendar = Calendar.getInstance()
         var endTimeCalendar = Calendar.getInstance()
         var count = 1
-        var chickUID=""
+        var chickUID = ""
 
         val rv = findViewById<RecyclerView>(R.id.mainRV)
         val rvAdapter = RVAdapter(dataModelList)
@@ -81,22 +83,22 @@ class MainActivity2 : AppCompatActivity() {
         val currentDate = startTimeCalendar.get(Calendar.DATE)
         endTimeCalendar.set(Calendar.MONTH, currentMonth + 3)
 
-            materialCalendar.state().edit()
-                .setFirstDayOfWeek(Calendar.SUNDAY)
-                .setMinimumDate(CalendarDay.from(currentYear, currentMonth, 1))
-                .setMaximumDate(
-                    CalendarDay.from(
-                        currentYear,
-                        currentMonth + 3,
-                        endTimeCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-                    )
+        materialCalendar.state().edit()
+            .setFirstDayOfWeek(Calendar.SUNDAY)
+            .setMinimumDate(CalendarDay.from(currentYear, currentMonth, 1))
+            .setMaximumDate(
+                CalendarDay.from(
+                    currentYear,
+                    currentMonth + 3,
+                    endTimeCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
                 )
-                .setCalendarDisplayMode(CalendarMode.MONTHS)
-                .commit()
+            )
+            .setCalendarDisplayMode(CalendarMode.MONTHS)
+            .commit()
 
-                //스피너에 chick list만들기
-            val chickRef=database.getReference(auth.currentUser?.uid.toString()).child("chick")
-            chickRef.addValueEventListener(object : ValueEventListener {
+        //스피너에 chick list만들기
+        val chickRef = database.getReference(auth.currentUser?.uid.toString()).child("chick")
+        chickRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 clearSpinner()
                 for (data in snapshot.children) {
@@ -134,6 +136,7 @@ class MainActivity2 : AppCompatActivity() {
                     override fun onNothingSelected(p0: AdapterView<*>?) {
 
                     }
+
                     override fun onItemSelected(
                         p0: AdapterView<*>?,
                         p1: View?,
@@ -374,6 +377,7 @@ class MainActivity2 : AppCompatActivity() {
                                     val eggRef = database.getReference(chickUID).child("egg")
                                     val eggModel = eggModel(dateChange, "10", "Bonus EGG")
                                     eggRef.push().setValue(eggModel)
+
                                 }
                                 val messRef = database.getReference(chickUID).child("message")
                                 val messchickRef =
@@ -496,15 +500,15 @@ class MainActivity2 : AppCompatActivity() {
 
 
         //마이페이지
-        val myBtn=findViewById<ImageView>(R.id.my)
-         myBtn.setOnClickListener {
-             //마이페이지로 넘어가기
-             var intent = Intent(this, MypageActivity::class.java)
-             intent.putParcelableArrayListExtra("list", chickList)
-             Log.d("MainActivity2 tag", "chickList ${chickList}")
-             intent.flags= Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-             startActivity(intent)
-     }
+        val myBtn = findViewById<ImageView>(R.id.my)
+        myBtn.setOnClickListener {
+            //마이페이지로 넘어가기
+            var intent = Intent(this, MypageActivity::class.java)
+            intent.putParcelableArrayListExtra("list", chickList)
+            Log.d("MainActivity2 tag", "chickList ${chickList}")
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
     }
 
     private fun dayParse(date: CalendarDay): String {
@@ -539,10 +543,11 @@ class MainActivity2 : AppCompatActivity() {
         }
         day = day_tmp
         Log.e("Date_DATE", DATE)
-        var dateText="${year}${parsedDATA[1].toInt()+1}${parsedDATA[2].toInt()}"
+        var dateText = "${year}${parsedDATA[1].toInt() + 1}${parsedDATA[2].toInt()}"
         DATE = "${year}.${month}.${day}"//정제된 날짜
         return dateText
     }
+
     private fun dayCleanParse(date: CalendarDay): String {
         var month: String
         var day: String

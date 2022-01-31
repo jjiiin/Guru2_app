@@ -37,7 +37,7 @@ class ChickenEggActivity : AppCompatActivity() {
     lateinit var editEgg: EditText
     lateinit var contents: EditText
     lateinit var time: String
-    lateinit var egg: String
+    lateinit var egg: String    // 현재 보유한 egg
     lateinit var chickenEggBack: ImageView
 
     private var eggArray: ArrayList<eggModel> = arrayListOf()
@@ -132,6 +132,7 @@ class ChickenEggActivity : AppCompatActivity() {
                 .addValueEventListener(object :
                     ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
+                        eggArray.clear()
                         for (data in snapshot.children) {
                             if (data.key != "totalEgg") {   // totalEgg를 제외 한 egg 내역을 eggArray에 담음
                                 val item = data.getValue<eggModel>()
@@ -139,7 +140,7 @@ class ChickenEggActivity : AppCompatActivity() {
                             }
                         }
                         eggArray.reverse()
-
+                        notifyDataSetChanged()
                     }
 
                     override fun onCancelled(error: DatabaseError) {
