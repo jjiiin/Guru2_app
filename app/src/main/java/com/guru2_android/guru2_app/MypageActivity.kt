@@ -19,6 +19,7 @@ class MypageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mypage)
 
+
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val uid = Firebase.auth.currentUser?.uid
         val reference: DatabaseReference =

@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:mcv_selectionColor="#C3C2C1"
-        app:mcv_tileHeight="38dp" />
+        app:mcv_tileHeight="45dp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,6 +34,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
             android:layout_gravity="right">
             <ImageView
                 android:layout_width="wrap_content"
@@ -64,7 +65,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mainRV"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="3dp"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="19dp"
         android:layout_marginRight="19dp"

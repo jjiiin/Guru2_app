@@ -608,7 +608,7 @@ class MainActivity2 : AppCompatActivity() {
         }
         month = month_tmp
         if (parsedDATA[2].toInt() < 10) {
-            var tmp = parsedDATA[2].toInt() + 1
+            var tmp = parsedDATA[2].toInt()
             day_tmp = "0$tmp"
         } else {
             day_tmp = parsedDATA[2].toInt().toString()
