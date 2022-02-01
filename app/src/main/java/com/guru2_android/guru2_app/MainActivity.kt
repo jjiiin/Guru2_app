@@ -1,5 +1,9 @@
 package com.guru2_android.guru2_app
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.media.Image
 import android.net.Uri
@@ -12,12 +16,16 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.NotificationCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.capstone_design.a1209_app.utils.Auth
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -26,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.guru2_android.guru2_app.dataModel.*
 import com.guru2_android.guru2_app.dateDecorator.Day1Decorator
@@ -82,6 +91,53 @@ class MainActivity : AppCompatActivity() {
         val currentMonth = startTimeCalendar.get(Calendar.MONTH)
         val currentDate = startTimeCalendar.get(Calendar.DATE)
         endTimeCalendar.set(Calendar.MONTH, currentMonth + 3)
+
+        // 푸쉬 알림
+        var builder = NotificationCompat.Builder(this, "Egg Challenge")
+            .setSmallIcon(R.drawable.logo)
+            .setContentTitle("퀘스트 생성 알림")
+            .setContentText("새로운 퀘스트가 추가되었습니다")
+
+        val pushRef = database.getReference(auth.currentUser?.uid.toString()).child("push").child("new")
+        pushRef.addValueEventListener(object :
+                ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.value == "1") {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 오레오 버전 이후에는 알림을 받을 때 채널이 필요
+                            val channel_id = "Egg Challenge" // 알림을 받을 채널 id 설정
+                            val channel_name = "Egg Challenge" // 채널 이름 설정
+                            val descriptionText = "Egg Challenge" // 채널 설명글 설정
+                            val importance = NotificationManager.IMPORTANCE_DEFAULT // 알림 우선순위 설정
+                            val channel = NotificationChannel(channel_id, channel_name, importance).apply {
+                                description = descriptionText
+                            }
+
+                            // 만든 채널 정보를 시스템에 등록
+                            val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                            notificationManager.createNotificationChannel(channel)
+
+                            // 알림 표시: 알림의 고유 ID(ex: 1002), 알림 결과
+                            notificationManager.notify(1002, builder.build())
+                        }
+                        pushRef.setValue("0")
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+
+        // 토큰 가져오기
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            // Get new FCM registration token
+            val token = task.result
+            // Log and toast
+            Log.d("token", token)
+        })
 
         // 현재 egg 가져오기
         FirebaseDatabase.getInstance().reference.child(auth.currentUser?.uid.toString())
@@ -224,6 +280,12 @@ class MainActivity : AppCompatActivity() {
                 val saveBtn = mAlertDialog.findViewById<TextView>(R.id.saveBtn)
 
                 title?.text = item.title
+
+                // 사진 업로드가 필수가 아니면 picBtn 없애기
+                if (item.image != "1") {
+                    picBtn!!.isVisible = false
+                }
+
                 picBtn?.setOnClickListener {
                     pickImage()
                 }
@@ -273,6 +335,7 @@ class MainActivity : AppCompatActivity() {
 
                     // 이미지가 없을 때 메세지 저장
                     certDatabase.child("message").setValue(message?.text.toString())
+                    setImage = false    // setImage 초기화
 
                     mAlertDialog.dismiss()
                     //setResult(RESULT_OK)

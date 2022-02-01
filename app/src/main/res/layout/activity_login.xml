@@ -30,14 +30,15 @@
                 android:src="@drawable/mail"
                 android:layout_gravity="center_vertical"/>
 
-        <EditText
-            android:id="@+id/idArea"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:layout_gravity="center"
-            android:backgroundTint="@color/yellow3"
-            android:hint=" 아이디를 입력하세요"/>
+            <EditText
+                android:id="@+id/idArea"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/yellow3"
+                android:hint=" 아이디를 입력하세요"
+                android:inputType="textEmailAddress" />
         </LinearLayout>
 
         <LinearLayout

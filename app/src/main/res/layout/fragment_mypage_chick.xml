@@ -68,8 +68,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:background="@color/yellow2"
-        android:text="프로필 수정"
-        style="@style/Widget.AppCompat.Button.Borderless"/>
+        android:text="프로필 수정"/>
+<!--        style="@style/Widget.AppCompat.Button.Borderless"-->
 
     <LinearLayout
         android:id="@+id/chick_last_message_layout"

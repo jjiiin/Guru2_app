@@ -1,6 +1,10 @@
 package com.guru2_android.guru2_app
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -19,6 +25,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.guru2_android.guru2_app.dataModel.*
 import com.guru2_android.guru2_app.dateDecorator.TodayDecorator
@@ -28,7 +35,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.materialCalendar
 import kotlinx.android.synthetic.main.activity_main2.*
 import java.util.*
-import kotlin.collections.HashSet
 
 class MainActivity2 : AppCompatActivity() {
     //닭회원일 때
@@ -147,6 +153,22 @@ class MainActivity2 : AppCompatActivity() {
                         //오늘의 job 가져오기-getReference를 spinner에 있는 uid로 바꾸기
 //                        dateText = dayParse(CalendarDay.today())
 //                        dateChange = dayCleanParse(CalendarDay.today())
+
+                        // 현재 egg 가져오기
+                        FirebaseDatabase.getInstance().reference.child(chickUID).child("egg").child("totalEgg")
+                            .addValueEventListener(object :
+                                ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    currentEgg = snapshot.child("egg").value.toString()
+                                    Log.d("tag", "currentEgg : ${currentEgg}")
+                                    if (currentEgg == "null") {    //egg가 없을 경우 0으로 지정
+                                        currentEgg = "0"
+                                    }
+                                }
+                                override fun onCancelled(error: DatabaseError) {
+                                }
+                            })
+
                         val schRef = database.getReference(chickUID).child(dateText).child("jobs")
                         schRef.addValueEventListener(object : ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
@@ -215,9 +237,9 @@ class MainActivity2 : AppCompatActivity() {
                                                 if (data2.key == "image") {
                                                     imageUri = data2.getValue().toString()
                                                     Log.d("tag", "imageUri : $imageUri")
-                                                    if (image != null) {
+                                                    if (imageUri != null) {    // image가 있으면 image 출력
                                                         Glide.with(this@MainActivity2)
-                                                            .load(imageUri).into(image)
+                                                            .load(imageUri).into(image!!)
                                                     }
                                                 }
                                                 if (data2.key == "message") {
@@ -308,22 +330,31 @@ class MainActivity2 : AppCompatActivity() {
                                 var time = ""
                                 var hour =
                                     mAlertDialog.findViewById<EditText>(R.id.hour)?.text.toString()
-                                if (hour.toInt() < 10) {
+                                if (hour != "" && hour.toInt() < 10) {    // hour이 선택되었을 경우
                                     hour = "0${hour}"
                                 }
                                 var minute =
                                     mAlertDialog.findViewById<EditText>(R.id.min)?.text.toString()
-                                if (minute.toInt() < 10) {
+                                if (minute != "" && minute.toInt() < 10) {  // minute이 선택되었을 경우
                                     minute = "0${minute}"
                                 }
-                                time = "${day} ${hour}:${minute}"
+
+                                if (hour != "" && minute != "") {   // hour, minute이 선택되었을 경우
+                                    time = "${day} ${hour}:${minute}"
+                                } else {    // hour, minute이 선택되지 않았을 경우
+                                    time = ""
+                                }
 
                                 val egg =
                                     mAlertDialog.findViewById<EditText>(R.id.egg)?.text.toString()
                                 val database = Firebase.database
 
                                 Log.e("DateText", dateText)
-                                //푸쉬알림
+
+                                // 푸쉬 알림
+                                val pushRef = database.getReference(chickUID).child("push").child("new")
+                                pushRef.setValue("1")
+
                                 //앞에서 더 밀려 나와야할 듯. uid로 db이름 하기
                                 val schRef =
                                     database.getReference(sendUid).child(dateText).child("jobs")
@@ -372,20 +403,6 @@ class MainActivity2 : AppCompatActivity() {
                                 //Log.d("Firmday",selectedDay.toString())
                                 myRef.push().setValue(model)
 
-                                // 현재 egg 가져오기
-                                FirebaseDatabase.getInstance().reference.child(chickUID).child("egg").child("totalEgg")
-                                    .addValueEventListener(object :
-                                        ValueEventListener {
-                                        override fun onDataChange(snapshot: DataSnapshot) {
-                                            currentEgg = snapshot.child("egg").value.toString()
-                                            if (currentEgg == "null") {    //egg가 없을 경우 0으로 지정
-                                                currentEgg = "0"
-                                            }
-                                        }
-                                        override fun onCancelled(error: DatabaseError) {
-                                        }
-                                    })
-
                                 //good일 경우 10egg추가하기
                                 if (firm == "3") {
                                     val eggRef = database.getReference(chickUID).child("egg")
@@ -394,6 +411,7 @@ class MainActivity2 : AppCompatActivity() {
 
                                     // total egg 수정
                                     val changeEgg = currentEgg.toInt() + 10
+                                    Log.d("tag", "currentEgg: ${currentEgg}")
                                     eggRef.child("totalEgg").child("egg").setValue(changeEgg.toString())
                                 }
                                 val messRef = database.getReference(chickUID).child("message")
@@ -601,4 +619,26 @@ class MainActivity2 : AppCompatActivity() {
         DATE = "${year}.${month}.${day}"//정제된 날짜
         return DATE
     }
+
+    // 푸쉬 알림
+//    private fun createNotificationChannel(builder: NotificationCompat.Builder, notificationId: Int) {
+//        // Create the NotificationChannel, but only on API 26+ because
+//        // the NotificationChannel class is new and not in the support library
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            val name = getString(R.string.app_name)
+//            val descriptionText = "테스트"
+//            val importance = NotificationManager.IMPORTANCE_DEFAULT
+//            val channel = NotificationChannel("Egg", name, importance).apply {
+//                description = descriptionText
+//            }
+//            // Register the channel with the system
+//            val notificationManager: NotificationManager =
+//                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//            notificationManager.createNotificationChannel(channel)
+//
+//            notificationManager.notify(notificationId, builder.build())
+//
+//            Log.d("tag", "푸쉬 알림")
+//        }
+//    }
 }
