@@ -140,7 +140,7 @@ class ChickenEggActivity : AppCompatActivity() {
                             }
                         }
                         eggArray.reverse()
-                        notifyDataSetChanged()
+                        notifyDataSetChanged()  // 값이 변경되었음을 알림
                     }
 
                     override fun onCancelled(error: DatabaseError) {
@@ -160,15 +160,15 @@ class ChickenEggActivity : AppCompatActivity() {
         }
 
         inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val textDate: TextView = itemView.findViewById(R.id.egg_date)   // egg가 수정된 날짜
-            val textContents: TextView = itemView.findViewById(R.id.egg_contents)   // egg 수정 내용
-            val textEgg: TextView = itemView.findViewById(R.id.egg_op)  // 차감, 증가한 egg
+            val textDate: TextView = itemView.findViewById(R.id.egg_date)
+            val textContents: TextView = itemView.findViewById(R.id.egg_contents)
+            val textEgg: TextView = itemView.findViewById(R.id.egg_op)
         }
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-            holder.textDate.text = eggArray[position].date
-            holder.textContents.text = eggArray[position].title
-            holder.textEgg.text = eggArray[position].egg
+            holder.textDate.text = eggArray[position].date  // egg가 수정된 날짜
+            holder.textContents.text = eggArray[position].title // egg 차감, 증가 사유
+            holder.textEgg.text = eggArray[position].egg    // 차감, 증가한 egg
         }
 
         override fun getItemCount(): Int {

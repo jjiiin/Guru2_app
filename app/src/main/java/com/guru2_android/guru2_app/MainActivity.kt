@@ -2,6 +2,7 @@ package com.guru2_android.guru2_app
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -92,17 +93,20 @@ class MainActivity : AppCompatActivity() {
         val currentDate = startTimeCalendar.get(Calendar.DATE)
         endTimeCalendar.set(Calendar.MONTH, currentMonth + 3)
 
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+
         // 푸쉬 알림
         var builder = NotificationCompat.Builder(this, "Egg Challenge")
             .setSmallIcon(R.drawable.logo)
             .setContentTitle("퀘스트 생성 알림")
             .setContentText("새로운 퀘스트가 추가되었습니다")
+            .setContentIntent(pendingIntent)
 
         val pushRef = database.getReference(auth.currentUser?.uid.toString()).child("push").child("new")
         pushRef.addValueEventListener(object :
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.value == "1") {
+                    if (snapshot.value == "1") {    // firebase push 값이 1이면 푸쉬 알림
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 오레오 버전 이후에는 알림을 받을 때 채널이 필요
                             val channel_id = "Egg Challenge" // 알림을 받을 채널 id 설정
                             val channel_name = "Egg Challenge" // 채널 이름 설정
@@ -119,7 +123,7 @@ class MainActivity : AppCompatActivity() {
                             // 알림 표시: 알림의 고유 ID(ex: 1002), 알림 결과
                             notificationManager.notify(1002, builder.build())
                         }
-                        pushRef.setValue("0")
+                        pushRef.setValue("0")   // 푸쉬 알림 후 firebase push 값을 다시 0으로 설정
                     }
                 }
 
@@ -294,13 +298,14 @@ class MainActivity : AppCompatActivity() {
                         database.getReference(auth.currentUser?.uid.toString()).child(dateText)
                             .child("jobs").child(item.title).child("cert")
 
-                    if (setImage == true) {
-                        FirebaseStorage.getInstance().reference.child(auth.currentUser?.uid.toString())
+                    // 이미지를 업로드 했을 경우
+                   if (setImage == true) {
+                        FirebaseStorage.getInstance().reference.child(auth.currentUser?.uid.toString()) // firebase storage에 이미지 저장
                             .child(dateText).child("jobs")
                             .child(item.title).child("cert").child("image")
                             .putFile(imageUri!!)
                             .addOnSuccessListener {
-                                FirebaseStorage.getInstance().reference.child(auth.currentUser?.uid.toString())
+                                FirebaseStorage.getInstance().reference.child(auth.currentUser?.uid.toString()) // firebase storage에서 이미지 uri를 가져와 realtime database에 저장
                                     .child(dateText).child("jobs").child(item.title).child("cert")
                                     .child("image").downloadUrl.addOnSuccessListener {
                                         questPicture = it
@@ -327,7 +332,7 @@ class MainActivity : AppCompatActivity() {
                     val eggModel = eggModel(dateChange, item.egg, item.title)
                     eggRef.push().setValue(eggModel)
 
-                    // 퀘스트 수행 완료시 egg 추가
+                    // 퀘스트 수행 완료시 totalegg 추가
                     val changeEgg = currentEgg.toInt() + item.egg.toInt()
                     Log.d("tag", "currentEgg : ${currentEgg}")
                     Log.d("tag", "item.egg : ${item.egg}")
@@ -414,7 +419,7 @@ class MainActivity : AppCompatActivity() {
         }
         month = month_tmp
         if (parsedDATA[2].toInt() < 10) {
-            var tmp = parsedDATA[2].toInt() + 1
+            var tmp = parsedDATA[2].toInt()
             day_tmp = "0$tmp"
         } else {
             day_tmp = parsedDATA[2].toInt().toString()
@@ -428,7 +433,7 @@ class MainActivity : AppCompatActivity() {
 
     // 이미지 불러오기
     private fun pickImage() {
-        var intent = Intent(Intent.ACTION_PICK)
+        var intent = Intent(Intent.ACTION_PICK) // 갤러리 앱 호출
         intent.type = "image/*"
 
         startActivityForResult(intent, pickStorage)
@@ -447,9 +452,9 @@ class MainActivity : AppCompatActivity() {
 
             val complete_picture =
                 mDialogView.findViewById<ImageView>(R.id.content)
-            Glide.with(this).load(imageUri).into(complete_picture)
+            Glide.with(this).load(imageUri).into(complete_picture)  // 화면에 출력
 
-            setImage = true
+            setImage = true // 이미지 업로드 했음을 알림
 
         }
 

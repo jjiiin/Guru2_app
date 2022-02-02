@@ -352,7 +352,7 @@ class MainActivity2 : AppCompatActivity() {
                                 Log.e("DateText", dateText)
 
                                 // 푸쉬 알림
-                                val pushRef = database.getReference(chickUID).child("push").child("new")
+                                val pushRef = database.getReference(sendUid).child("push").child("new")
                                 pushRef.setValue("1")
 
                                 //앞에서 더 밀려 나와야할 듯. uid로 db이름 하기

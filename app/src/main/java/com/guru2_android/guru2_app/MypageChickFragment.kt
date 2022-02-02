@@ -120,7 +120,7 @@ class MypageChickFragment : Fragment() {
                             val item = data.getValue<messageModel>()
                             message.add(item!!)
                         }
-                        message.reverse()
+                        message.reverse()   // 순서 반전
                         if (message.size != 0) {    // 메세지 목록이 있을 경우 최근 메세지 변수에 담음
                             recentMessage = message[0]
                         }

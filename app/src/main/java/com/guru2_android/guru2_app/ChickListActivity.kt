@@ -69,7 +69,7 @@ class ChickListActivity : AppCompatActivity() {
         // holder에 병아리 목록 배열에 저장된 값을 넣음
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
             Log.d("tag", "chickList : ${chickList}")
-            holder.textName.text = chickList[position].name
+            holder.textName.text = chickList[position].name // 병아리 이름
 
             // item을 클릭하면 chick의 egg를 차감하는 페이지로 이동
             holder.itemView.setOnClickListener {

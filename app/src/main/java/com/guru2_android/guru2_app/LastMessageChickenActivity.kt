@@ -32,8 +32,6 @@ class LastMessageChickenActivity : AppCompatActivity() {
         // 뒤로 가기 버튼
         lastMessageChickenBack = findViewById(R.id.last_message_chicken_back)
 
-
-
         // 리사이클러뷰
         val recyclerView = findViewById<RecyclerView>(R.id.chicken_last_message_recyclerview)
 
@@ -56,7 +54,7 @@ class LastMessageChickenActivity : AppCompatActivity() {
                         val item = data.getValue<messChicken>()
                         message.add(item!!)
                     }
-                    message.reverse()
+                    message.reverse()   // 최신순으로 재정렬
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -82,9 +80,9 @@ class LastMessageChickenActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
 
-            holder.textName.text = message[position].chickname
-            holder.textDate.text = message[position].date
-            holder.textChat.text = message[position].mess
+            holder.textName.text = message[position].chickname  // 병아리 이름
+            holder.textDate.text = message[position].date   // 메세지 보낸 날짜
+            holder.textChat.text = message[position].mess   // 메세지 내용
         }
 
         override fun getItemCount(): Int {
