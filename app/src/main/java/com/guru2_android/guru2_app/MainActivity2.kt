@@ -91,7 +91,7 @@ class MainActivity2 : AppCompatActivity() {
 
         materialCalendar.state().edit()
             .setFirstDayOfWeek(Calendar.SUNDAY)
-            .setMinimumDate(CalendarDay.from(currentYear, currentMonth, 1))
+            .setMinimumDate(CalendarDay.from(currentYear,currentMonth-1, 1))
             .setMaximumDate(
                 CalendarDay.from(
                     currentYear,
