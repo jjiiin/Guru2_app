@@ -54,12 +54,9 @@ class MainActivity : AppCompatActivity() {
     //병아리 회원일 때,
     private lateinit var auth: FirebaseAuth
 
-    //    private lateinit var month:String
-//    private lateinit var day:String
     private lateinit var dateText: String
     private lateinit var dateChange: String
 
-    //    private lateinit var selectedDay: CalendarDay
     private var currentEgg = "0"    // 현재 egg
     private val pickStorage = 1001
     var setImage: Boolean = false
@@ -80,17 +77,12 @@ class MainActivity : AppCompatActivity() {
         Log.d("cur_use", Auth.current_email.toString())
         var startTimeCalendar = Calendar.getInstance()
         var endTimeCalendar = Calendar.getInstance()
-//        var DATE : String
-//        var year : String
-//        var month_tmp=""
-//        var day_tmp=""
-        //var count=1 닭에서 퀘스트 생성할 때 숫자 필요함.
+
         auth = Firebase.auth
         val database = Firebase.database
 
         val currentYear = startTimeCalendar.get(Calendar.YEAR)
         val currentMonth = startTimeCalendar.get(Calendar.MONTH)
-        val currentDate = startTimeCalendar.get(Calendar.DATE)
         endTimeCalendar.set(Calendar.MONTH, currentMonth + 3)
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
@@ -194,10 +186,8 @@ class MainActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 rv.removeAllViewsInLayout()
                 dataModelList.clear()
-                //itemKeyList.clear()
                 for (DataModel in snapshot.children) {
                     dataModelList.add(DataModel.getValue(jobModel::class.java)!!)
-                    //itemKeyList.add(DataModel.key.toString())
                 }
                 rvAdapter.notifyDataSetChanged()
                 Log.d("DataModel", dataModelList.toString())
@@ -249,14 +239,11 @@ class MainActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     rv.removeAllViewsInLayout()
                     dataModelList.clear()
-                    //itemModelList.clear()
                     for (DataModel in snapshot.children) {
                         val item = DataModel.getValue(jobModel::class.java)
                         dataModelList.add(item!!)
-                        //itemKeyList.add(DataModel.key.toString())
                     }
                     rvAdapter.notifyDataSetChanged()
-                    //Log.d("DataModel",dataModelList.toString())
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -280,7 +267,6 @@ class MainActivity : AppCompatActivity() {
                 val title = mAlertDialog.findViewById<TextView>(R.id.title)
                 val message = mAlertDialog.findViewById<EditText>(R.id.message)
                 val picBtn = mAlertDialog.findViewById<ImageView>(R.id.imgplus)
-                //val img=mAlertDialog.findViewById<ImageView>(R.id.content)
                 val saveBtn = mAlertDialog.findViewById<TextView>(R.id.saveBtn)
 
                 title?.text = item.title
@@ -312,9 +298,7 @@ class MainActivity : AppCompatActivity() {
                                         Log.d("tag", "$questPicture")
                                         certDatabase.child("image")
                                             .setValue(questPicture.toString())
-//                                    val model =
-//                                        certModel(questPicture.toString(), message?.text.toString())
-//                                    certDatabase.setValue(model)
+
                                     }
                             }
                     }
@@ -343,7 +327,6 @@ class MainActivity : AppCompatActivity() {
                     setImage = false    // setImage 초기화
 
                     mAlertDialog.dismiss()
-                    //setResult(RESULT_OK)
                 }
             }
         })
@@ -358,55 +341,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun dayParse(date: CalendarDay): String {
-        var month: String
-        var day: String
-        //var dateText:String
-        var selectedDay: CalendarDay
-
-        var DATE: String
-        var year: String
-        var month_tmp = ""
-        var day_tmp = ""
-
-        selectedDay = date
-        DATE = selectedDay.toString()
         var parsedDATA: List<String> = date.toString().split("{")
         parsedDATA = parsedDATA[1].split("}").toList()
         parsedDATA = parsedDATA[0].split("-").toList()
-        year = parsedDATA[0].toInt().toString()
-        if (parsedDATA[1].toInt() < 10) {
-            var tmp = parsedDATA[1].toInt() + 1
-            month_tmp = "0$tmp"
-        } else {
-            month_tmp = (parsedDATA[1].toInt() + 1).toString()
-        }
-        month = month_tmp
-        if (parsedDATA[2].toInt() < 10) {
-            var tmp = parsedDATA[2].toInt() + 1
-            day_tmp = "0$tmp"
-        } else {
-            day_tmp = parsedDATA[2].toInt().toString()
-        }
-        day = day_tmp
-        //Log.e("Date_DATE", DATE)
-        dateText = "${year}${parsedDATA[1].toInt() + 1}${parsedDATA[2].toInt()}"
-        DATE = "${year}.${month}.${day}"//정제된 날짜
+        var dateText = "${parsedDATA[0].toInt()}${parsedDATA[1].toInt() + 1}${parsedDATA[2].toInt()}"
         return dateText
     }
 
     private fun dayCleanParse(date: CalendarDay): String {
-        var month: String
-        var day: String
-        //var dateText:String
-        var selectedDay: CalendarDay
-
         var DATE: String
         var year: String
+        var month: String
+        var day: String
+
         var month_tmp = ""
         var day_tmp = ""
 
-        selectedDay = date
-        DATE = selectedDay.toString()
         var parsedDATA: List<String> = date.toString().split("{")
         parsedDATA = parsedDATA[1].split("}").toList()
         parsedDATA = parsedDATA[0].split("-").toList()
@@ -425,8 +375,6 @@ class MainActivity : AppCompatActivity() {
             day_tmp = parsedDATA[2].toInt().toString()
         }
         day = day_tmp
-        Log.e("Date_DATE", DATE)
-        //dateText="${year}${parsedDATA[1].toInt()+1}${parsedDATA[2].toInt()}"
         DATE = "${year}.${month}.${day}"//정제된 날짜
         return DATE
     }
