@@ -41,6 +41,7 @@ class ChickEggActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = RecyclerViewAdapter()
 
+        // 뒤로 가기 버튼 클릭
         chickEggBack.setOnClickListener {
             finish()
         }
@@ -49,10 +50,10 @@ class ChickEggActivity : AppCompatActivity() {
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (data in snapshot.children) {
-                    if (data.key == "totalEgg") {
+                    if (data.key == "totalEgg") {   // 현재 소유한 egg 출력
                         currentEggText.text = "현재 보유한 에그 : " + data.child("egg").value.toString() + "egg"
                     }
-                    if (data.key != "totalEgg") {
+                    if (data.key != "totalEgg") {   // egg 내역을 배열에 담음
                         val item = data.getValue<eggModel>()
                         history.add(item!!)
                     }
@@ -67,6 +68,7 @@ class ChickEggActivity : AppCompatActivity() {
 
     }
 
+    // egg 내역을 RecyclerView로 출력
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.CustomViewHolder>() {
 
         override fun onCreateViewHolder(
@@ -85,9 +87,9 @@ class ChickEggActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-            holder.textDate.text = history[position].date
-            holder.textContents.text = history[position].title
-            holder.textEgg.text = history[position].egg
+            holder.textDate.text = history[position].date   // egg가 수정된 날짜
+            holder.textContents.text = history[position].title  // egg 차감, 증가 사유
+            holder.textEgg.text = history[position].egg // 차감, 증가된 egg
         }
 
         override fun getItemCount(): Int {

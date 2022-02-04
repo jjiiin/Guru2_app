@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">guru2_app</string>
+    <string name="app_name">Egg Challenge</string>
     <string name="mypage_toolbar">마이페이지</string>
     <string name="last_message_toolbar">지난 칭찬 메세지</string>
     <string name="last_message_chicken_toolbar">내가 남긴 칭찬 메세지</string>
