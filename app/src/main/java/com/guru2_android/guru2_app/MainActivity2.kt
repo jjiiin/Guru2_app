@@ -39,20 +39,14 @@ class MainActivity2 : AppCompatActivity() {
     val chickList = arrayListOf<chickModel>()
     val chickNameList = arrayListOf<String>()
     val chickListTemp = arrayListOf<chickModel>()
-    val chickNameListTemp = arrayListOf<String>()
 
     private fun clearSpinner() {
         this.chickListTemp.clear()
-        this.chickNameListTemp.clear()
     }
 
     private fun updateSpinner(item: chickModel) {
         this.chickListTemp.add(item)
         Log.d("fun_chick", item.toString())
-    }
-
-    private fun updateNameSpinner(name: String) {
-        this.chickNameListTemp.add(name)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +84,14 @@ class MainActivity2 : AppCompatActivity() {
                 )
             )
             .setCalendarDisplayMode(CalendarMode.MONTHS)
-            .commit()
+            .commit()//기본 캘린더 세팅
+        //오늘 날짜를 노랑 볼드체로 표시하기
+        val todayDecorator = TodayDecorator()
+        materialCalendar.addDecorators(todayDecorator)
+
+        //날짜를 string으로 받거나 정제된 날짜형식(0000.00.00)으로 받아오기
+        dateText = dayParse(CalendarDay.today())
+        dateChange = dayCleanParse(CalendarDay.today())
 
         //스피너에 chick list만들기
         val chickRef = database.getReference(auth.currentUser?.uid.toString()).child("chick")
@@ -102,7 +103,6 @@ class MainActivity2 : AppCompatActivity() {
                     Log.d("item_spinner", item.toString())
                     if (item != null) {
                         updateSpinner(item)
-                        updateNameSpinner(item.name)
                     }
                 }
                 //중복 값 지우기
@@ -112,15 +112,6 @@ class MainActivity2 : AppCompatActivity() {
                     chickList.add(data)
                     chickNameList.add(data.name)
                 }
-
-                //오늘 날짜를 노랑 볼드체로 표시하기
-                val todayDecorator = TodayDecorator()
-                materialCalendar.addDecorators(todayDecorator)
-
-                //날짜를 string으로 받거나 정제된 날짜형식(0000.00.00)으로 받아오기
-                dateText = dayParse(CalendarDay.today())
-                dateChange = dayCleanParse(CalendarDay.today())
-
                 //스피너 구현
                 val spinner: Spinner = findViewById(R.id.spinner)
                 val adapter = ArrayAdapter(
@@ -139,7 +130,6 @@ class MainActivity2 : AppCompatActivity() {
                         p3: Long
                     ) {
                         chickUID = chickList[position].uid
-
                         // 현재 egg 가져오기
                         FirebaseDatabase.getInstance().reference.child(chickUID).child("egg").child("totalEgg")
                             .addValueEventListener(object :
@@ -155,39 +145,43 @@ class MainActivity2 : AppCompatActivity() {
                                 }
                             })
 
+                        //퀘스트를 리사이클러뷰에 보이기 위한 dataModelList 생성
                         val schRef = database.getReference(chickUID).child(dateText).child("jobs")
+                        Log.d("RV_uid",chickUID)
                         schRef.addValueEventListener(object : ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
                                 rv.removeAllViewsInLayout()
                                 dataModelList.clear()
                                 for (DataModel in snapshot.children) {
                                     dataModelList.add(DataModel.getValue(jobModel::class.java)!!)
+
                                 }
                                 rvAdapter.notifyDataSetChanged()
-                                Log.d("DataModel", dataModelList.toString())
-                            }
+                                Log.d("RV_Today",chickUID+dataModelList.toString())
 
+                            }
                             override fun onCancelled(error: DatabaseError) {
                                 TODO("Not yet implemented")
                             }
                         })
+
                         //날짜 누르는 이벤트-날짜 누르면 그 날의 job을 리싸이클러뷰에 추가하기기
                         materialCalendar.setOnDateChangedListener { widget, date, selected ->
                             dateText = dayParse(date)
                             dateChange = dayCleanParse(date)
                             //파이어베이스로부터 job 가져오기
-                            val schRef = database.getReference(chickUID).child(dateText)
+                            val schChangeRef = database.getReference(chickUID).child(dateText)
                                 .child("jobs")
-                            schRef.addValueEventListener(object : ValueEventListener {
+                            schChangeRef.addValueEventListener(object : ValueEventListener {
                                 override fun onDataChange(snapshot: DataSnapshot) {
                                     rv.removeAllViewsInLayout()
                                     dataModelList.clear()
-                                    //itemModelList.clear()
                                     for (DataModel in snapshot.children) {
                                         val item = DataModel.getValue(jobModel::class.java)
                                         dataModelList.add(item!!)
                                     }
                                     rvAdapter.notifyDataSetChanged()
+                                    Log.d("RV_change",chickUID+dataModelList.toString())
                                 }
 
                                 override fun onCancelled(error: DatabaseError) {
@@ -195,6 +189,7 @@ class MainActivity2 : AppCompatActivity() {
                                 }
                             })
                         }//날짜 바뀔 때마다 리싸이클러 뷰 바꾸기
+
                         //리사이클러뷰 클릭 리스너
                         rvAdapter.setItemClickListener(object : RVAdapter.OnItemClickListener {
                             override fun onClick(v: View, position: Int) {
@@ -267,9 +262,11 @@ class MainActivity2 : AppCompatActivity() {
                                             if (item!!.nickname == search) {
                                                 val searchView =
                                                     mAlertDialog.findViewById<TextView>(R.id.emailView)
-                                                searchView?.visibility = View.VISIBLE
-                                                searchView?.text = "아이디: ${item!!.email}"
+
                                                 sendUid = item!!.uid
+                                                    searchView?.visibility = View.VISIBLE
+                                                    searchView?.text = "아이디: ${item!!.email}"
+
                                                 val model = chickModel(item!!.nickname, item!!.uid)
                                                 val chickRef =
                                                     database.getReference(auth.currentUser?.uid.toString())
@@ -302,7 +299,6 @@ class MainActivity2 : AppCompatActivity() {
                                 day = "PM"
                             }
 
-                            Log.d("sendUid", sendUid)
                             val saveBtn = mAlertDialog.findViewById<Button>(R.id.saveBtn)
                             saveBtn?.setOnClickListener {
                                 val title =
@@ -335,17 +331,31 @@ class MainActivity2 : AppCompatActivity() {
 
                                 Log.e("DateText", dateText)
 
+
                                 // 푸쉬 알림
                                 val pushRef = database.getReference(sendUid).child("push").child("new")
                                 pushRef.setValue("1")
 
-                                val schRef =
+                                val schReference =
                                     database.getReference(sendUid).child(dateText).child("jobs")
+                                Log.d("sendUID",sendUid)
+                                var show=false
+                                var count=0
+                                for (i in chickList){
+                                    count++
+                                    if(sendUid==i.uid){
+                                        show=true
+                                        break
+                                    }
+                                }
+                                if(show){
+                                    Log.d("count",count.toString())
+                                    count-=1
+                                spinner.setSelection(count)}
                                 val model = jobModel(title, sub, time, image, "", egg)
-                                schRef.child("${title}").setValue(model)
+                                schReference.child("${title}").setValue(model)
                                 mAlertDialog.dismiss()
                             }
-
                         }//퀘스트 생성
 
                         //최종확인(체크 버튼)-닭
@@ -484,15 +494,20 @@ class MainActivity2 : AppCompatActivity() {
                 var time = ""
                 var hour =
                     mAlertDialog.findViewById<EditText>(R.id.hour)?.text.toString()
-                if (hour.toInt() < 10) {
+                if (hour != "" && hour.toInt() < 10) {    // hour이 선택되었을 경우
                     hour = "0${hour}"
                 }
                 var minute =
                     mAlertDialog.findViewById<EditText>(R.id.min)?.text.toString()
-                if (minute.toInt() < 10) {
+                if (minute != "" && minute.toInt() < 10) {  // minute이 선택되었을 경우
                     minute = "0${minute}"
                 }
-                time = "${day} ${hour}:${minute}"
+
+                if (hour != "" && minute != "") {   // hour, minute이 선택되었을 경우
+                    time = "${day} ${hour}:${minute}"
+                } else {    // hour, minute이 선택되지 않았을 경우
+                    time = ""
+                }
 
                 val egg =
                     mAlertDialog.findViewById<EditText>(R.id.egg)?.text.toString()
@@ -500,10 +515,10 @@ class MainActivity2 : AppCompatActivity() {
 
                 Log.e("DateText", dateText)
                 //푸쉬알림
-                val schRef =
+                val schRefer =
                     database.getReference(sendUid).child(dateText).child("jobs")
                 val model = jobModel(title, sub, time, image, "", egg)
-                schRef.child("${title}").setValue(model)
+                schRefer.child("${title}").setValue(model)
                 mAlertDialog.dismiss()
             }
 
