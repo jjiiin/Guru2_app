@@ -4,6 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.view.KeyEvent.KEYCODE_ENTER
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.capstone_design.a1209_app.utils.FBRef
@@ -28,7 +31,6 @@ class LoginActivity : AppCompatActivity() {
         binding= DataBindingUtil.setContentView(this, R.layout.activity_login)
 
         auth= Firebase.auth
-
 
         binding.loginBtn.setOnClickListener {
             //바로 홈 화면이 보여야함.
