@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
         materialCalendar.selectedDate = CalendarDay.today()
 
         //오늘 날짜를 노랑 볼드체로 표시하기
-        val todayDecorator = TodayDecorator(this)
+        val todayDecorator = TodayDecorator()
         materialCalendar.addDecorators(todayDecorator)
         //오늘의 job 가져오기
         val schRef =
