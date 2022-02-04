@@ -1,10 +1,6 @@
 package com.guru2_android.guru2_app
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,8 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -25,15 +19,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.guru2_android.guru2_app.dataModel.*
 import com.guru2_android.guru2_app.dateDecorator.TodayDecorator
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.materialCalendar
-import kotlinx.android.synthetic.main.activity_main2.*
 import java.util.*
 
 class MainActivity2 : AppCompatActivity() {
@@ -49,6 +40,7 @@ class MainActivity2 : AppCompatActivity() {
     val chickNameList = arrayListOf<String>()
     val chickListTemp = arrayListOf<chickModel>()
     val chickNameListTemp = arrayListOf<String>()
+
     private fun clearSpinner() {
         this.chickListTemp.clear()
         this.chickNameListTemp.clear()
@@ -70,7 +62,6 @@ class MainActivity2 : AppCompatActivity() {
 
         var startTimeCalendar = Calendar.getInstance()
         var endTimeCalendar = Calendar.getInstance()
-        var count = 1
         var chickUID = ""
 
         val rv = findViewById<RecyclerView>(R.id.mainRV)
@@ -86,7 +77,6 @@ class MainActivity2 : AppCompatActivity() {
 
         val currentYear = startTimeCalendar.get(Calendar.YEAR)
         val currentMonth = startTimeCalendar.get(Calendar.MONTH)
-        val currentDate = startTimeCalendar.get(Calendar.DATE)
         endTimeCalendar.set(Calendar.MONTH, currentMonth + 3)
 
         materialCalendar.state().edit()
@@ -124,9 +114,10 @@ class MainActivity2 : AppCompatActivity() {
                 }
 
                 //오늘 날짜를 노랑 볼드체로 표시하기
-                val todayDecorator = TodayDecorator(this@MainActivity2)
+                val todayDecorator = TodayDecorator()
                 materialCalendar.addDecorators(todayDecorator)
 
+                //날짜를 string으로 받거나 정제된 날짜형식(0000.00.00)으로 받아오기
                 dateText = dayParse(CalendarDay.today())
                 dateChange = dayCleanParse(CalendarDay.today())
 
@@ -140,9 +131,7 @@ class MainActivity2 : AppCompatActivity() {
                 spinner.adapter = adapter
                 spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onNothingSelected(p0: AdapterView<*>?) {
-
                     }
-
                     override fun onItemSelected(
                         p0: AdapterView<*>?,
                         p1: View?,
@@ -150,9 +139,6 @@ class MainActivity2 : AppCompatActivity() {
                         p3: Long
                     ) {
                         chickUID = chickList[position].uid
-                        //오늘의 job 가져오기-getReference를 spinner에 있는 uid로 바꾸기
-//                        dateText = dayParse(CalendarDay.today())
-//                        dateChange = dayCleanParse(CalendarDay.today())
 
                         // 현재 egg 가져오기
                         FirebaseDatabase.getInstance().reference.child(chickUID).child("egg").child("totalEgg")
@@ -225,7 +211,6 @@ class MainActivity2 : AppCompatActivity() {
                                 val message = mAlertDialog.findViewById<TextView>(R.id.message)
                                 val image = mAlertDialog.findViewById<ImageView>(R.id.content)
                                 Log.d("clicked", item.title)
-                                //Toast.makeText(this@MainActivity2,item.title,Toast.LENGTH_LONG).show()
                                 title!!.text = item.title
                                 FirebaseDatabase.getInstance().reference.child(chickUID)
                                     .child(dateText)
@@ -268,7 +253,7 @@ class MainActivity2 : AppCompatActivity() {
                                 AlertDialog.Builder(this@MainActivity2).setView(mDialogView)
                             val mAlertDialog = mBuilder.show()
 
-                            var sendUid = chickUID
+                            var sendUid = chickUID//스피너에 선택된 병아리 uid를 할당함
                             val searchBtn = mAlertDialog.findViewById<ImageView>(R.id.searchBtn)
                             searchBtn?.setOnClickListener {
                                 val search =
@@ -286,7 +271,6 @@ class MainActivity2 : AppCompatActivity() {
                                                 searchView?.text = "아이디: ${item!!.email}"
                                                 sendUid = item!!.uid
                                                 val model = chickModel(item!!.nickname, item!!.uid)
-                                                //val chickModel=chickNameModel(item!!.nickname)
                                                 val chickRef =
                                                     database.getReference(auth.currentUser?.uid.toString())
                                                         .child("chick")
@@ -355,7 +339,6 @@ class MainActivity2 : AppCompatActivity() {
                                 val pushRef = database.getReference(chickUID).child("push").child("new")
                                 pushRef.setValue("1")
 
-                                //앞에서 더 밀려 나와야할 듯. uid로 db이름 하기
                                 val schRef =
                                     database.getReference(sendUid).child(dateText).child("jobs")
                                 val model = jobModel(title, sub, time, image, "", egg)
@@ -394,13 +377,9 @@ class MainActivity2 : AppCompatActivity() {
                                     mAlertDialog.findViewById<EditText>(R.id.message)?.text.toString()
                                 val database = Firebase.database
                                 auth = Firebase.auth
-                                //레퍼런스에 병아리 uid가져와야함.
-
                                 val myRef = database.getReference(chickUID).child("firm")
-                                //앞에서 더 밀려 나와야할 듯. uid로 db이름 하기
 
                                 val model = firmModel(firm, message, dateChange)
-                                //Log.d("Firmday",selectedDay.toString())
                                 myRef.push().setValue(model)
 
                                 //good일 경우 10egg추가하기
@@ -430,7 +409,6 @@ class MainActivity2 : AppCompatActivity() {
                     }
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
@@ -463,7 +441,6 @@ class MainActivity2 : AppCompatActivity() {
                                 searchView?.text = "아이디: ${item!!.email}"
                                 sendUid = item!!.uid
                                 val model = chickModel(item!!.nickname, item!!.uid)
-                                //val chickModel=chickNameModel(item!!.nickname)
                                 val chickRef =
                                     database.getReference(auth.currentUser?.uid.toString())
                                         .child("chick")
@@ -523,7 +500,6 @@ class MainActivity2 : AppCompatActivity() {
 
                 Log.e("DateText", dateText)
                 //푸쉬알림
-                //앞에서 더 밀려 나와야할 듯. uid로 db이름 하기
                 val schRef =
                     database.getReference(sendUid).child(dateText).child("jobs")
                 val model = jobModel(title, sub, time, image, "", egg)
@@ -533,69 +509,34 @@ class MainActivity2 : AppCompatActivity() {
 
         }//퀘스트 생성
 
-
         //마이페이지
         val myBtn = findViewById<ImageView>(R.id.my)
         myBtn.setOnClickListener {
             //마이페이지로 넘어가기
             var intent = Intent(this, MypageActivity::class.java)
             intent.putParcelableArrayListExtra("list", chickList)
-            Log.d("MainActivity2 tag", "chickList ${chickList}")
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
     }
 
     private fun dayParse(date: CalendarDay): String {
-        var month: String
-        var day: String
-        //var dateText:String
-        var selectedDay: CalendarDay
-
-        var DATE: String
-        var year: String
-        var month_tmp = ""
-        var day_tmp = ""
-
-        selectedDay = date
-        DATE = selectedDay.toString()
         var parsedDATA: List<String> = date.toString().split("{")
         parsedDATA = parsedDATA[1].split("}").toList()
         parsedDATA = parsedDATA[0].split("-").toList()
-        year = parsedDATA[0].toInt().toString()
-        if (parsedDATA[1].toInt() < 10) {
-            var tmp = parsedDATA[1].toInt() + 1
-            month_tmp = "0$tmp"
-        } else {
-            month_tmp = (parsedDATA[1].toInt() + 1).toString()
-        }
-        month = month_tmp
-        if (parsedDATA[2].toInt() < 10) {
-            var tmp = parsedDATA[2].toInt() + 1
-            day_tmp = "0$tmp"
-        } else {
-            day_tmp = parsedDATA[2].toInt().toString()
-        }
-        day = day_tmp
-        Log.e("Date_DATE", DATE)
-        var dateText = "${year}${parsedDATA[1].toInt() + 1}${parsedDATA[2].toInt()}"
-        DATE = "${year}.${month}.${day}"//정제된 날짜
+        var dateText = "${parsedDATA[0].toInt()}${parsedDATA[1].toInt() + 1}${parsedDATA[2].toInt()}"
         return dateText
     }
 
     private fun dayCleanParse(date: CalendarDay): String {
-        var month: String
-        var day: String
-        //var dateText:String
-        var selectedDay: CalendarDay
-
         var DATE: String
         var year: String
+        var month: String
+        var day: String
+
         var month_tmp = ""
         var day_tmp = ""
 
-        selectedDay = date
-        DATE = selectedDay.toString()
         var parsedDATA: List<String> = date.toString().split("{")
         parsedDATA = parsedDATA[1].split("}").toList()
         parsedDATA = parsedDATA[0].split("-").toList()
@@ -614,31 +555,7 @@ class MainActivity2 : AppCompatActivity() {
             day_tmp = parsedDATA[2].toInt().toString()
         }
         day = day_tmp
-        Log.e("Date_DATE", DATE)
-        //dateText="${year}${parsedDATA[1].toInt()+1}${parsedDATA[2].toInt()}"
         DATE = "${year}.${month}.${day}"//정제된 날짜
         return DATE
     }
-
-    // 푸쉬 알림
-//    private fun createNotificationChannel(builder: NotificationCompat.Builder, notificationId: Int) {
-//        // Create the NotificationChannel, but only on API 26+ because
-//        // the NotificationChannel class is new and not in the support library
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val name = getString(R.string.app_name)
-//            val descriptionText = "테스트"
-//            val importance = NotificationManager.IMPORTANCE_DEFAULT
-//            val channel = NotificationChannel("Egg", name, importance).apply {
-//                description = descriptionText
-//            }
-//            // Register the channel with the system
-//            val notificationManager: NotificationManager =
-//                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//            notificationManager.createNotificationChannel(channel)
-//
-//            notificationManager.notify(notificationId, builder.build())
-//
-//            Log.d("tag", "푸쉬 알림")
-//        }
-//    }
 }

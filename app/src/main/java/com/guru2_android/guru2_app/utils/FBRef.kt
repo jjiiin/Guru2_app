@@ -9,14 +9,11 @@ class FBRef {
 
     companion object{
         private val database = Firebase.database
-        private val store=Firebase.firestore
         //group별 user-database
         val usersRef = database.getReference("users")
+        //퀘스트를 생성할 때 유저를 검색하기 위해 레퍼런스를 받아오고 변수에 할당함
         val userSearchRef = database.getReference("userSearch")
-        //할 일 전달하는 데베(RDB)
-        val jobRef=database.getReference("job")
-        //하루 총평(3단계, 칭찬멘트) 전달하는 데베(FDB)
-        //val firm=store.collection(//"유저id").document(//"날짜").set("Datamodel(//3단계,칭찬멘트))
+
     }
 
 

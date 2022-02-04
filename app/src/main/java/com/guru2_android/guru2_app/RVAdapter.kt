@@ -16,16 +16,14 @@ import com.google.firebase.ktx.Firebase
 import com.guru2_android.guru2_app.dataModel.eggModel
 import com.guru2_android.guru2_app.dataModel.jobModel
 
+//퀘스트 목록을 리싸이클러뷰에 출력하는 어댑터 클래스
 class RVAdapter(val items:MutableList<jobModel>):RecyclerView.Adapter<RVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view= LayoutInflater.from(parent.context).inflate(R.layout.listview_item,parent,false)
-
         return ViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        //holder.bindItems(items[position],context)
         val item=items[position]
         holder.title.text=item.title
         holder.time.text=item.time
@@ -56,12 +54,10 @@ class RVAdapter(val items:MutableList<jobModel>):RecyclerView.Adapter<RVAdapter.
         return items.size
     }
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
-
         val title:TextView=itemView.findViewById(R.id.title)
         val time:TextView=itemView.findViewById(R.id.time)
         val sub:TextView=itemView.findViewById(R.id.sub)
         val image:ImageView=itemView.findViewById(R.id.cam)
-
 
     }
 

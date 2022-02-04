@@ -59,7 +59,6 @@ class JoinActivity : AppCompatActivity() {
                 auth.createUserWithEmailAndPassword(id, pwd).addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this,"성공",Toast.LENGTH_LONG).show()
-
                         //회원 데이터베이스에 이메일, 닉네임, 그룹 정보 저장
                         val userData = UserData(id,name,group,auth.currentUser!!.uid)
                         FBRef.usersRef.child(auth.currentUser!!.uid).setValue(userData)//RDB

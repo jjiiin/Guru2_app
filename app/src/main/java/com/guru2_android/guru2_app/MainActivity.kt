@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +15,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
@@ -45,8 +43,6 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -79,17 +75,13 @@ class MainActivity : AppCompatActivity() {
         Log.d("cur_use", Auth.current_email.toString())
         var startTimeCalendar = Calendar.getInstance()
         var endTimeCalendar = Calendar.getInstance()
-//        var DATE : String
-//        var year : String
-//        var month_tmp=""
-//        var day_tmp=""
-        //var count=1 닭에서 퀘스트 생성할 때 숫자 필요함.
+
         auth = Firebase.auth
         val database = Firebase.database
 
         val currentYear = startTimeCalendar.get(Calendar.YEAR)
         val currentMonth = startTimeCalendar.get(Calendar.MONTH)
-        val currentDate = startTimeCalendar.get(Calendar.DATE)
+
         endTimeCalendar.set(Calendar.MONTH, currentMonth + 3)
 
         // 푸쉬 알림
@@ -181,7 +173,7 @@ class MainActivity : AppCompatActivity() {
         materialCalendar.selectedDate = CalendarDay.today()
 
         //오늘 날짜를 노랑 볼드체로 표시하기
-        val todayDecorator = TodayDecorator(this)
+        val todayDecorator = TodayDecorator()
         materialCalendar.addDecorators(todayDecorator)
         //오늘의 job 가져오기
         val schRef =
@@ -190,10 +182,8 @@ class MainActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 rv.removeAllViewsInLayout()
                 dataModelList.clear()
-                //itemKeyList.clear()
                 for (DataModel in snapshot.children) {
                     dataModelList.add(DataModel.getValue(jobModel::class.java)!!)
-                    //itemKeyList.add(DataModel.key.toString())
                 }
                 rvAdapter.notifyDataSetChanged()
                 Log.d("DataModel", dataModelList.toString())
@@ -245,14 +235,11 @@ class MainActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     rv.removeAllViewsInLayout()
                     dataModelList.clear()
-                    //itemModelList.clear()
                     for (DataModel in snapshot.children) {
                         val item = DataModel.getValue(jobModel::class.java)
                         dataModelList.add(item!!)
-                        //itemKeyList.add(DataModel.key.toString())
                     }
                     rvAdapter.notifyDataSetChanged()
-                    //Log.d("DataModel",dataModelList.toString())
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -272,11 +259,9 @@ class MainActivity : AppCompatActivity() {
                 val mBuilder = AlertDialog.Builder(this@MainActivity).setView(mDialogView)
                 val mAlertDialog = mBuilder.show()
 
-
                 val title = mAlertDialog.findViewById<TextView>(R.id.title)
                 val message = mAlertDialog.findViewById<EditText>(R.id.message)
                 val picBtn = mAlertDialog.findViewById<ImageView>(R.id.imgplus)
-                //val img=mAlertDialog.findViewById<ImageView>(R.id.content)
                 val saveBtn = mAlertDialog.findViewById<TextView>(R.id.saveBtn)
 
                 title?.text = item.title
@@ -285,7 +270,7 @@ class MainActivity : AppCompatActivity() {
                 if (item.image != "1") {
                     picBtn!!.isVisible = false
                 }
-
+                //퀘스트 인증 사진을 추가함.
                 picBtn?.setOnClickListener {
                     pickImage()
                 }
@@ -307,9 +292,7 @@ class MainActivity : AppCompatActivity() {
                                         Log.d("tag", "$questPicture")
                                         certDatabase.child("image")
                                             .setValue(questPicture.toString())
-//                                    val model =
-//                                        certModel(questPicture.toString(), message?.text.toString())
-//                                    certDatabase.setValue(model)
+
                                     }
                             }
                     }
@@ -338,7 +321,6 @@ class MainActivity : AppCompatActivity() {
                     setImage = false    // setImage 초기화
 
                     mAlertDialog.dismiss()
-                    //setResult(RESULT_OK)
                 }
             }
         })
@@ -353,55 +335,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun dayParse(date: CalendarDay): String {
-        var month: String
-        var day: String
-        //var dateText:String
-        var selectedDay: CalendarDay
-
-        var DATE: String
-        var year: String
-        var month_tmp = ""
-        var day_tmp = ""
-
-        selectedDay = date
-        DATE = selectedDay.toString()
         var parsedDATA: List<String> = date.toString().split("{")
         parsedDATA = parsedDATA[1].split("}").toList()
         parsedDATA = parsedDATA[0].split("-").toList()
-        year = parsedDATA[0].toInt().toString()
-        if (parsedDATA[1].toInt() < 10) {
-            var tmp = parsedDATA[1].toInt() + 1
-            month_tmp = "0$tmp"
-        } else {
-            month_tmp = (parsedDATA[1].toInt() + 1).toString()
-        }
-        month = month_tmp
-        if (parsedDATA[2].toInt() < 10) {
-            var tmp = parsedDATA[2].toInt() + 1
-            day_tmp = "0$tmp"
-        } else {
-            day_tmp = parsedDATA[2].toInt().toString()
-        }
-        day = day_tmp
-        //Log.e("Date_DATE", DATE)
-        dateText = "${year}${parsedDATA[1].toInt() + 1}${parsedDATA[2].toInt()}"
-        DATE = "${year}.${month}.${day}"//정제된 날짜
+        dateText = "${parsedDATA[0].toInt()}${parsedDATA[1].toInt() + 1}${parsedDATA[2].toInt()}"
         return dateText
     }
 
     private fun dayCleanParse(date: CalendarDay): String {
-        var month: String
-        var day: String
-        //var dateText:String
-        var selectedDay: CalendarDay
-
         var DATE: String
         var year: String
+        var month: String
+        var day: String
+
         var month_tmp = ""
         var day_tmp = ""
 
-        selectedDay = date
-        DATE = selectedDay.toString()
         var parsedDATA: List<String> = date.toString().split("{")
         parsedDATA = parsedDATA[1].split("}").toList()
         parsedDATA = parsedDATA[0].split("-").toList()
@@ -420,8 +369,6 @@ class MainActivity : AppCompatActivity() {
             day_tmp = parsedDATA[2].toInt().toString()
         }
         day = day_tmp
-        Log.e("Date_DATE", DATE)
-        //dateText="${year}${parsedDATA[1].toInt()+1}${parsedDATA[2].toInt()}"
         DATE = "${year}.${month}.${day}"//정제된 날짜
         return DATE
     }
@@ -430,13 +377,11 @@ class MainActivity : AppCompatActivity() {
     private fun pickImage() {
         var intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
-
         startActivityForResult(intent, pickStorage)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == RESULT_OK) {
             if (requestCode == pickStorage) {
                 val pickedImage: Uri? = data?.data
@@ -444,14 +389,10 @@ class MainActivity : AppCompatActivity() {
                     imageUri = pickedImage
                 }
             }
-
             val complete_picture =
                 mDialogView.findViewById<ImageView>(R.id.content)
             Glide.with(this).load(imageUri).into(complete_picture)
-
             setImage = true
-
         }
-
     }
 }

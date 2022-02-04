@@ -6,11 +6,8 @@ import com.google.firebase.ktx.Firebase
 
 class Auth {
     companion object {
-        //사용자 uid 얻어오기위함
+        //현재 앱에 접속한 사용자의 이메일을 받아옴
         private val auth = Firebase.auth
-
-        //사용자 uid얻어옴
-        val current_uid = auth.currentUser!!.uid
         val current_email = auth.currentUser!!.email
     }
 
