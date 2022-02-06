@@ -94,34 +94,37 @@ class MainActivity : AppCompatActivity() {
             .setContentText("새로운 퀘스트가 추가되었습니다")
             .setContentIntent(pendingIntent)
 
-        val pushRef = database.getReference(auth.currentUser?.uid.toString()).child("push").child("new")
+        val pushRef =
+            database.getReference(auth.currentUser?.uid.toString()).child("push").child("new")
         pushRef.addValueEventListener(object :
-                ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.value == "1") {    // firebase push 값이 1이면 푸쉬 알림
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 오레오 버전 이후에는 알림을 받을 때 채널이 필요
-                            val channel_id = "Egg Challenge" // 알림을 받을 채널 id 설정
-                            val channel_name = "Egg Challenge" // 채널 이름 설정
-                            val descriptionText = "Egg Challenge" // 채널 설명글 설정
-                            val importance = NotificationManager.IMPORTANCE_DEFAULT // 알림 우선순위 설정
-                            val channel = NotificationChannel(channel_id, channel_name, importance).apply {
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.value == "1") {    // firebase push 값이 1이면 푸쉬 알림
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 오레오 버전 이후에는 알림을 받을 때 채널이 필요
+                        val channel_id = "Egg Challenge" // 알림을 받을 채널 id 설정
+                        val channel_name = "Egg Challenge" // 채널 이름 설정
+                        val descriptionText = "Egg Challenge" // 채널 설명글 설정
+                        val importance = NotificationManager.IMPORTANCE_DEFAULT // 알림 우선순위 설정
+                        val channel =
+                            NotificationChannel(channel_id, channel_name, importance).apply {
                                 description = descriptionText
                             }
 
-                            // 만든 채널 정보를 시스템에 등록
-                            val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                            notificationManager.createNotificationChannel(channel)
+                        // 만든 채널 정보를 시스템에 등록
+                        val notificationManager: NotificationManager =
+                            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        notificationManager.createNotificationChannel(channel)
 
-                            // 알림 표시: 알림의 고유 ID(ex: 1002), 알림 결과
-                            notificationManager.notify(1002, builder.build())
-                        }
-                        pushRef.setValue("0")   // 푸쉬 알림 후 firebase push 값을 다시 0으로 설정
+                        // 알림 표시: 알림의 고유 ID(ex: 1002), 알림 결과
+                        notificationManager.notify(1002, builder.build())
                     }
+                    pushRef.setValue("0")   // 푸쉬 알림 후 firebase push 값을 다시 0으로 설정
                 }
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                }
-            })
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
 
         // 토큰 가져오기
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -153,7 +156,7 @@ class MainActivity : AppCompatActivity() {
 
         materialCalendar.state().edit()
             .setFirstDayOfWeek(Calendar.SUNDAY)
-            .setMinimumDate(CalendarDay.from(currentYear, currentMonth-1, 1))
+            .setMinimumDate(CalendarDay.from(currentYear, currentMonth - 1, 1))
             .setMaximumDate(
                 CalendarDay.from(
                     currentYear,
@@ -280,53 +283,65 @@ class MainActivity : AppCompatActivity() {
                     pickImage()
                 }
                 saveBtn?.setOnClickListener {
-                    val certDatabase =
-                        database.getReference(auth.currentUser?.uid.toString()).child(dateText)
-                            .child("jobs").child(item.title).child("cert")
+                    if (item.image == "1" && setImage == false) {   // 사진이 필수인데 이미지를 추가하지 않았을 경우 토스트 메세지 출력
+                        Toast.makeText(this@MainActivity, "사진을 추가하세요", Toast.LENGTH_SHORT).show()
+                    } else {
+                        val certDatabase =
+                            database.getReference(auth.currentUser?.uid.toString()).child(dateText)
+                                .child("jobs").child(item.title).child("cert")
 
-                    // 이미지를 업로드 했을 경우
-                   if (setImage == true) {
-                        FirebaseStorage.getInstance().reference.child(auth.currentUser?.uid.toString()) // firebase storage에 이미지 저장
-                            .child(dateText).child("jobs")
-                            .child(item.title).child("cert").child("image")
-                            .putFile(imageUri!!)
-                            .addOnSuccessListener {
-                                FirebaseStorage.getInstance().reference.child(auth.currentUser?.uid.toString()) // firebase storage에서 이미지 uri를 가져와 realtime database에 저장
-                                    .child(dateText).child("jobs").child(item.title).child("cert")
-                                    .child("image").downloadUrl.addOnSuccessListener {
-                                        questPicture = it
-                                        Log.d("tag", "$questPicture")
-                                        certDatabase.child("image")
-                                            .setValue(questPicture.toString())
+                        // 이미지를 업로드 했을 경우
+                        if (setImage == true) {
+                            FirebaseStorage.getInstance().reference.child(auth.currentUser?.uid.toString()) // firebase storage에 이미지 저장
+                                .child(dateText).child("jobs")
+                                .child(item.title).child("cert").child("image")
+                                .putFile(imageUri!!)
+                                .addOnSuccessListener {
+                                    FirebaseStorage.getInstance().reference.child(auth.currentUser?.uid.toString()) // firebase storage에서 이미지 uri를 가져와 realtime database에 저장
+                                        .child(dateText).child("jobs").child(item.title)
+                                        .child("cert")
+                                        .child("image").downloadUrl.addOnSuccessListener {
+                                            questPicture = it
+                                            Log.d("tag", "$questPicture")
+                                            certDatabase.child("image")
+                                                .setValue(questPicture.toString())
 
-                                    }
-                            }
+                                        }
+                                }
+                        }
+
+                        //완료 done 키값 바꾸기-색상 변경됨.(RVAdapter)
+                        val model =
+                            jobModel(item.title, item.sub, item.time, item.image, "1", item.egg)
+                        val schRef =
+                            database.getReference(auth.currentUser?.uid.toString()).child(dateText)
+                                .child("jobs")
+                        schRef.child(item.title).setValue(model)
+
+                        //퀘스트 수행 완료 egg내역에 추가(위에랑 같이 움직이기)
+                        val eggRef =
+                            database.getReference(auth.currentUser?.uid.toString()).child("egg")
+                        val eggModel = eggModel(dateChange, item.egg, item.title)
+                        eggRef.push().setValue(eggModel)
+
+                        // 퀘스트 수행 완료시 totalegg 추가
+                        var changeEgg = 0
+                        if (item.egg == "") {   // 퀘스트 생성시 egg를 입력하지 않으면 추가 egg가 없음
+                            changeEgg = currentEgg.toInt()
+                        } else {
+                            changeEgg = currentEgg.toInt() + item.egg.toInt()
+                        }
+
+                        Log.d("tag", "currentEgg : ${currentEgg}")
+                        Log.d("tag", "item.egg : ${item.egg}")
+                        eggRef.child("totalEgg").child("egg").setValue(changeEgg.toString())
+
+                        // 이미지가 없을 때 메세지 저장
+                        certDatabase.child("message").setValue(message?.text.toString())
+                        setImage = false    // setImage 초기화
+
+                        mAlertDialog.dismiss()
                     }
-
-                    //완료 done 키값 바꾸기-색상 변경됨.(RVAdapter)
-                    val model = jobModel(item.title, item.sub, item.time, item.image, "1", item.egg)
-                    val schRef =
-                        database.getReference(auth.currentUser?.uid.toString()).child(dateText)
-                            .child("jobs")
-                    schRef.child(item.title).setValue(model)
-
-                    //퀘스트 수행 완료 egg내역에 추가(위에랑 같이 움직이기)
-                    val eggRef =
-                        database.getReference(auth.currentUser?.uid.toString()).child("egg")
-                    val eggModel = eggModel(dateChange, item.egg, item.title)
-                    eggRef.push().setValue(eggModel)
-
-                    // 퀘스트 수행 완료시 totalegg 추가
-                    val changeEgg = currentEgg.toInt() + item.egg.toInt()
-                    Log.d("tag", "currentEgg : ${currentEgg}")
-                    Log.d("tag", "item.egg : ${item.egg}")
-                    eggRef.child("totalEgg").child("egg").setValue(changeEgg.toString())
-
-                    // 이미지가 없을 때 메세지 저장
-                    certDatabase.child("message").setValue(message?.text.toString())
-                    setImage = false    // setImage 초기화
-
-                    mAlertDialog.dismiss()
                 }
             }
         })
@@ -344,7 +359,8 @@ class MainActivity : AppCompatActivity() {
         var parsedDATA: List<String> = date.toString().split("{")
         parsedDATA = parsedDATA[1].split("}").toList()
         parsedDATA = parsedDATA[0].split("-").toList()
-        var dateText = "${parsedDATA[0].toInt()}${parsedDATA[1].toInt() + 1}${parsedDATA[2].toInt()}"
+        var dateText =
+            "${parsedDATA[0].toInt()}${parsedDATA[1].toInt() + 1}${parsedDATA[2].toInt()}"
         return dateText
     }
 
