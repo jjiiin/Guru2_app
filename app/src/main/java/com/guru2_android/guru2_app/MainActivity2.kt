@@ -331,30 +331,34 @@ class MainActivity2 : AppCompatActivity() {
 
                                 Log.e("DateText", dateText)
 
+                                if (title == "") {  // 타이틀 입력하지 않을 경우 에러 처리
+                                    Toast.makeText(this@MainActivity2, "제목을 입력하세요", Toast.LENGTH_SHORT)
+                                    Log.d("MainActivity2", "제목 입력하지 않음")
+                                } else {
+                                    // 푸쉬 알림
+                                    val pushRef = database.getReference(sendUid).child("push").child("new")
+                                    pushRef.setValue("1")
 
-                                // 푸쉬 알림
-                                val pushRef = database.getReference(sendUid).child("push").child("new")
-                                pushRef.setValue("1")
-
-                                val schReference =
-                                    database.getReference(sendUid).child(dateText).child("jobs")
-                                Log.d("sendUID",sendUid)
-                                var show=false
-                                var count=0
-                                for (i in chickList){
-                                    count++
-                                    if(sendUid==i.uid){
-                                        show=true
-                                        break
+                                    val schReference =
+                                        database.getReference(sendUid).child(dateText).child("jobs")
+                                    Log.d("sendUID",sendUid)
+                                    var show=false
+                                    var count=0
+                                    for (i in chickList){
+                                        count++
+                                        if(sendUid==i.uid){
+                                            show=true
+                                            break
+                                        }
                                     }
+                                    if(show){
+                                        Log.d("count",count.toString())
+                                        count-=1
+                                        spinner.setSelection(count)}
+                                    val model = jobModel(title, sub, time, image, "", egg)
+                                    schReference.child("${title}").setValue(model)
+                                    mAlertDialog.dismiss()
                                 }
-                                if(show){
-                                    Log.d("count",count.toString())
-                                    count-=1
-                                spinner.setSelection(count)}
-                                val model = jobModel(title, sub, time, image, "", egg)
-                                schReference.child("${title}").setValue(model)
-                                mAlertDialog.dismiss()
                             }
                         }//퀘스트 생성
 
