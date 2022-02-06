@@ -6,10 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -107,19 +104,23 @@ class ChickenEggActivity : AppCompatActivity() {
             val formatter2 = DateTimeFormatter.ofPattern("yyyy.MM.dd")
             val date = current.format(formatter2)
 
-            // egg 차감 내역 firebase에 추가
-            val eggRef = database.reference.child(chickUid).child("egg")
-            val eggModel = eggModel(date, "-" + editEgg.text.toString(), contents.text.toString())
-            eggRef.push().setValue(eggModel)
+            if (editEgg.text.toString() != "" && contents.text.toString() != "") {
+                // egg 차감 내역 firebase에 추가
+                val eggRef = database.reference.child(chickUid).child("egg")
+                val eggModel = eggModel(date, "-" + editEgg.text.toString(), contents.text.toString())
+                eggRef.push().setValue(eggModel)
 
-            // total egg 수정
-            val changeEgg = egg.toInt() - Integer.parseInt(editEgg.text.toString())
-            database.reference.child(chickUid).child("egg")
-                .child("totalEgg").child("egg").setValue(changeEgg.toString())
+                // total egg 수정
+                val changeEgg = egg.toInt() - Integer.parseInt(editEgg.text.toString())
+                database.reference.child(chickUid).child("egg")
+                    .child("totalEgg").child("egg").setValue(changeEgg.toString())
 
-            // editText 초기화
-            editEgg.setText("")
-            contents.setText("")
+                // editText 초기화
+                editEgg.setText("")
+                contents.setText("")
+            } else {    // 에그 또는 사유를 입력하지 않았을 경우 토스트 메세지 출력
+                Toast.makeText(this, "에그와 사유를 모두 입력해주세요", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }
